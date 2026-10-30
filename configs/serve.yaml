@@ -1,0 +1,8 @@
+# config.yaml
+# router: cor, single-turn, full-history, rag, knn, bao, or your own
+router: cor
+serving: [vllm, openrouter]
+models:
+  vllm: [gemma-e4b, gemma-26b-a4b]
+  openrouter: [gemma-31b, mistral-medium-128b]
+log: logs/
