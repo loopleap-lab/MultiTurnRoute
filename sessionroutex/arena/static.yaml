@@ -1,0 +1,20 @@
+# Static track: fixed settings, the same for every submission.
+dataset: chat
+# model pool, in this order (ties in a decision go to the model listed first)
+models: [granite-3b, gemma-e4b, gpt-oss-20b, devstral-24b, gemma-26b-a4b, granite-30b, gemma-31b, nemotron-30b-a3b,
+         mistral-medium-128b]
+# USD per 1M tokens: input, cached input, output
+prices:
+  granite-3b:          {input: 0.017,  cached: 0.0034, output: 0.112, source: "proxy: ibm-granite/granite-4.0-h-micro (3B) on openrouter"}
+  gemma-e4b:           {input: 0.02,   cached: 0.004,  output: 0.04,  source: "proxy: Gemma 3n E4B class price; no listing for gemma-4-E4B"}
+  gpt-oss-20b:         {input: 0.018,  cached: 0.009,  output: 0.09,  source: "openrouter"}
+  devstral-24b:        {input: 0.1,    cached: 0.02,   output: 0.3,   source: "secondary: Mistral API price for Devstral Small 2"}
+  gemma-26b-a4b:       {input: 0.0765, cached: 0.0425, output: 0.255, source: "openrouter"}
+  granite-30b:         {input: 0.16,   cached: 0.04,   output: 0.65,  source: "deepinfra"}
+  gemma-31b:           {input: 0.2,    cached: 0.04,   output: 0.4,   source: "openrouter"}
+  nemotron-30b-a3b:    {input: 0.07,   cached: 0.04,   output: 0.2,   source: "openrouter (nemotron-3.5-lightning)"}
+  mistral-medium-128b: {input: 1.5,    cached: 0.3,    output: 7.5,   source: "openrouter (mistral-medium-3-5)"}
+# lambda = 0 and kappa / (1 + kappa) for 40 values of kappa log-spaced over [1e-2, 1e3]: 41 points
+lambdas: {kappa_min: 1.0e-2, kappa_max: 1.0e+3, n_kappa: 40}
+# the frozen encoder of the precomputed embeddings; its input tokens are charged to every learned router
+encoder: {price_as: granite-3b, history_chars: 2000}

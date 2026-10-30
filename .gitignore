@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.venv/
+.pytest_cache/
+
+# data and outputs never go into git
+data/
+runs/
+logs/
+*.npz
+*.jsonl
+!tests/fixtures/*.jsonl
+!tests/fixtures/**/*.jsonl

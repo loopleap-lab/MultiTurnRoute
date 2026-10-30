@@ -1,0 +1,31 @@
+[project]
+name = "sessionroutex"
+version = "0.1.0"
+description = "A session layer for multi-turn LLM routing: per-chat history and KV cache state, routers, serving backends, an arena."
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10"
+dependencies = ["numpy", "torch", "pyyaml"]
+
+[project.optional-dependencies]
+serve = ["fastapi", "uvicorn"]           # sessionroutex serve: the HTTP gateway
+encoder = ["transformers>=4.46"]         # live embeddings for the built-in routers (granite-4.2-3b)
+test = ["pytest", "fastapi", "httpx"]
+
+[project.scripts]
+sessionroutex = "sessionroutex.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore:invalid value encountered:RuntimeWarning",   # the package's bootstrap CI over inf QNCs
+                  "ignore:Using `httpx` with `starlette.testclient`"]
+
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["sessionroutex*"]
+
+[tool.setuptools.package-data]
+"sessionroutex.arena" = ["static.yaml"]
