@@ -1,0 +1,9 @@
+# The website's example, runnable anywhere: your router, the echo backend and your backend (my_lab.py stands in
+# for your code). sessionroutex serve examples/config.yaml, then python examples/app.py
+router: my-router
+serving: [echo, my-backend]
+models:
+  echo: [gemma-e4b]
+  my-backend: [gemma-26b-a4b, gemma-31b]
+plugins: [my_router.py, my_backend.py]
+log: logs/
