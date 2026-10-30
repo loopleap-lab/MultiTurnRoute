@@ -1,10 +1,15 @@
-<h1 align="center">SessionRouteX</h1>
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/static/logo-dark.png">
+    <img src="docs/static/logo-light.png" alt="SessionRouteX" width="560">
+  </picture>
+</p>
 
 <p align="center"><strong>A session layer for multi-turn LLM routing</strong></p>
 
 <p align="center">
   <a href="https://claude.ai/artifact/AYHUoA4NUXJdo1Dd71U6G1">
-    <img src="https://img.shields.io/badge/Website-SessionRouteX-2E5E8B?logo=googlechrome&logoColor=white" alt="Website">
+    <img src="https://img.shields.io/badge/Website-SessionRouteX-8B4B2E?logo=googlechrome&logoColor=white" alt="Website">
   </a>
   <a href="https://openreview.net/forum?id=CPCK7uqzh3">
     <img src="https://img.shields.io/badge/Paper-CoR%20(NeurIPS%202026)-b31b1b" alt="Paper">
@@ -18,6 +23,13 @@ hard question, without paying twice for the same chat history. SessionRouteX kee
 was said (the history) and how many tokens each model already holds for it (the KV cache), so any router can read
 both. Your app talks to one gateway; the router picks a model for every turn; the serving backend's usage keeps both
 states up to date and gives the bill.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/static/overview-dark.png">
+    <img src="docs/static/overview-light.png" alt="SessionRouteX: your app sends each message of a chat; the gateway keeps the chat's history and KV cache state, the router picks a model for the turn and a serving backend runs it; the reply, the turn's cost and a log line come out" width="880">
+  </picture>
+</p>
 
 ## Install
 
