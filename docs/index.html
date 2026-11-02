@@ -1552,7 +1552,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
     <div class="sub">A session layer for multi-turn LLM routing</div>
     <p class="desc">A router picks which model answers each turn of a multi-turn session: a cheap one for an easy follow-up, a strong one for a hard question, without paying twice for the same session history. MultiTurnServe keeps track of what each session said and which model already read it, so any router can use both.</p>
     <div class="ticket">
-      <div class="install"><code><span>git clone https://github.com/UCF-ML-Research/MultiTurnServe</span><span>cd MultiTurnServe &amp;&amp; pip install -e ".[serve]"</span></code></div>
+      <div class="install"><code><span>git clone https://github.com/loopleap-lab/MultiTurnServe</span><span>cd MultiTurnServe &amp;&amp; pip install -e ".[serve]"</span></code></div>
       <div class="tear"><a class="primary" href="#start">Get started</a><a href="#live">Try an example session</a></div>
     </div>
     <div class="hfig" id="hfig" aria-label="Four turns of a session. Each turn adds to the history and to the KV cache of the model that answered. To route turn 3, the router reads both.">
@@ -1680,8 +1680,8 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
       <svg class="rtic" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="none" stroke="var(--ink)" stroke-width="2.4"/><path d="M8 11 C14 11 14 17 20 17 M8 23 C14 23 14 17 20 17 M20 17 H27" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="27" cy="17" r="2.6" fill="var(--good)"/></svg>
       <span>MultiTurn<span class="hl">Serve</span></span>
     </a><p style="margin:12px 0 0;max-width:46ch">A session layer for multi-turn LLM routing. UCF ML Research</p></div>
-      <div><h4>Project</h4><ul><li><a href="https://github.com/UCF-ML-Research/MultiTurnServe">GitHub</a></li><li><a href="https://openreview.net/forum?id=CPCK7uqzh3">Paper</a></li><li><a href="https://github.com/UCF-ML-Research/MultiTurnServe/blob/main/ROADMAP.md">Roadmap</a></li></ul></div>
-      <div><h4>Docs</h4><ul><li><a href="https://github.com/UCF-ML-Research/MultiTurnServe/blob/main/docs/user-guide.md">User guide</a></li><li><a href="https://github.com/UCF-ML-Research/MultiTurnServe/blob/main/docs/architecture.md">Architecture</a></li><li><a href="https://github.com/UCF-ML-Research/MultiTurnServe/blob/main/docs/routers.md">Routers</a></li><li><a href="https://github.com/UCF-ML-Research/MultiTurnServe/blob/main/docs/backends.md">Backends</a></li><li><a href="https://github.com/UCF-ML-Research/MultiTurnServe/blob/main/docs/FAQ.md">FAQ</a></li></ul></div>
+      <div><h4>Project</h4><ul><li><a href="https://github.com/loopleap-lab/MultiTurnServe">GitHub</a></li><li><a href="https://openreview.net/forum?id=CPCK7uqzh3">Paper</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/ROADMAP.md">Roadmap</a></li></ul></div>
+      <div><h4>Docs</h4><ul><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/user-guide.md">User guide</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/architecture.md">Architecture</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/routers.md">Routers</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/backends.md">Backends</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/FAQ.md">FAQ</a></li></ul></div>
     </div>
   </div>
 </footer>
@@ -1820,7 +1820,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
   const code = (t) => { const p = el("pre", "wf-yaml"); p.textContent = t; if (window.mwxHL) mwxHL(p); return p; };
   const STEPS = [
-    { cmd: "git clone https://github.com/UCF-ML-Research/MultiTurnServe && cd MultiTurnServe && pip install -e \".[serve]\"", out: ['<span class="runv-d">Successfully installed multiturnserve</span>'],
+    { cmd: "git clone https://github.com/loopleap-lab/MultiTurnServe && cd MultiTurnServe && pip install -e \".[serve]\"", out: ['<span class="runv-d">Successfully installed multiturnserve</span>'],
       head: "Install", cap: "The package with the gateway ([serve] extra), the examples and the demo.",
       fig: () => el("div", "wf-chips", ["cor", "single-turn", "full-history", "rag", "knn", "bao", "vllm", "openrouter", "echo"].map((m) => `<code>${m}</code>`).join("") + "<span>routers and serving backends; your own plug in the same way</span>") },
     { cmd: "cat examples/config.yaml", out: [],

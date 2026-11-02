@@ -19,7 +19,7 @@ the arena. [How MultiTurnServe works](architecture.md) explains the session stat
 From source:
 
 ```bash
-git clone https://github.com/UCF-ML-Research/MultiTurnServe.git && cd MultiTurnServe
+git clone https://github.com/loopleap-lab/MultiTurnServe.git && cd MultiTurnServe
 pip install -e ".[serve,test]"      # the package, the `multiturnserve` command, the gateway (and pytest)
 pip install -e ".[encoder]"         # transformers, for live embeddings with granite-4.2-3b
 pytest -q                           # synthetic data, CPU, about 10 seconds

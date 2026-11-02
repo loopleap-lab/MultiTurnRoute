@@ -3,7 +3,7 @@ message: "If you use MultiTurnServe or Chain-of-Route in your research, please c
 title: "Chain-of-Route: State-Aware LLM Routing for Multi-Turn Conversations"
 type: software
 license: Apache-2.0
-repository-code: "https://github.com/UCF-ML-Research/MultiTurnServe"
+repository-code: "https://github.com/loopleap-lab/MultiTurnServe"
 url: "https://openreview.net/forum?id=CPCK7uqzh3"
 authors:
   - family-names: Xue
@@ -31,5 +31,5 @@ preferred-citation:
     name: "NeurIPS 2026"
   year: 2026
   url: "https://openreview.net/forum?id=CPCK7uqzh3"
-  repository-code: "https://github.com/UCF-ML-Research/MultiTurnServe"
+  repository-code: "https://github.com/loopleap-lab/MultiTurnServe"
   license: Apache-2.0

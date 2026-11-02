@@ -9,7 +9,7 @@
 
 <p align="center">
   <b>Project</b>&nbsp; · &nbsp;
-  <a href="https://ucf-ml-research.github.io/MultiTurnServe/">Website</a> ·
+  <a href="https://loopleap-lab.github.io/MultiTurnServe/">Website</a> ·
   <a href="https://openreview.net/forum?id=CPCK7uqzh3">Paper</a> ·
   <a href="#citation">Cite</a>
   <br>
@@ -17,7 +17,7 @@
   <a href="#quick-start">Quick start</a> ·
   <a href="#demo">Demo</a> ·
   <a href="LEADERBOARD.md">Leaderboard</a> ·
-  <a href="https://github.com/UCF-ML-Research/MultiTurnServe/issues">Issues</a>
+  <a href="https://github.com/loopleap-lab/MultiTurnServe/issues">Issues</a>
   <br>
   <b>Reference</b>&nbsp; · &nbsp;
   <a href="#documentation">Docs</a> ·
@@ -81,7 +81,7 @@ python -m demo.session        # no GPU and no API keys: the echo backend
 ## Installation
 
 ```bash
-git clone https://github.com/UCF-ML-Research/MultiTurnServe.git
+git clone https://github.com/loopleap-lab/MultiTurnServe.git
 cd MultiTurnServe
 pip install -e ".[serve]"            # the package, the `multiturnserve` command and the gateway
 pip install -e ".[encoder]"          # live embeddings for the built-in routers
@@ -279,7 +279,7 @@ numbers: its main results (Section 4) use a different, five-model pool.
 ## Issues and contact
 
 Questions, bug reports and feature requests go to
-[GitHub issues](https://github.com/UCF-ML-Research/MultiTurnServe/issues).
+[GitHub issues](https://github.com/loopleap-lab/MultiTurnServe/issues).
 
 ## License
 
