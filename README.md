@@ -9,7 +9,7 @@
 
 <p align="center">
   <b>Project</b>&nbsp; · &nbsp;
-  <a href="https://loopleap-lab.github.io/MultiTurnServe/">Website</a> ·
+  <a href="https://claude.ai/artifact/AYHUoA4NUXJdo1Dd71U6G1">Website</a> ·
   <a href="https://openreview.net/forum?id=CPCK7uqzh3">Paper</a> ·
   <a href="#citation">Cite</a>
   <br>
