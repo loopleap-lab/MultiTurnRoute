@@ -4,8 +4,8 @@ Per turn: quality of every model in [0, 1] (chat: judge_quality; lic: evaluator_
 Only the longest prefix of consecutive turns where every model has a label is kept (a missing middle turn would break
 the cost accounting of a routed path). Splits come from the dataset: chat `split` (train/test), lic `fold` (0-4).
 
-The data folder is SRX_DATA_DIR (default ./data): chat.jsonl, embeddings/emb_chat_granite3b.npz, prices.json. In the
-public release the test turns carry no labels; the organizer's labels are in SRX_HIDDEN_DIR/labels.jsonl
+The data folder is MTS_DATA_DIR (default ./data): chat.jsonl, embeddings/emb_chat_granite3b.npz, prices.json. In the
+public release the test turns carry no labels; the organizer's labels are in MTS_HIDDEN_DIR/labels.jsonl
 ({"turn_id", "labels"} per line) and are joined back by turn_id.
 """
 import hashlib
@@ -21,11 +21,11 @@ LABEL = {"chat": "judge_quality", "lic": "evaluator_score"}
 
 
 def data_dir(path=None) -> Path:
-    return Path(path or os.environ.get("SRX_DATA_DIR") or "data")
+    return Path(path or os.environ.get("MTS_DATA_DIR") or "data")
 
 
 def hidden_dir(path=None) -> Path | None:
-    p = path or os.environ.get("SRX_HIDDEN_DIR")
+    p = path or os.environ.get("MTS_HIDDEN_DIR")
     return Path(p) if p else None
 
 
@@ -67,7 +67,7 @@ def holdout(conv_id: str, frac: float = 0.1) -> bool:
 
 
 def hidden_labels(hidden=None) -> dict:
-    """turn_id -> labels, from SRX_HIDDEN_DIR/labels.jsonl (empty if no hidden folder)."""
+    """turn_id -> labels, from MTS_HIDDEN_DIR/labels.jsonl (empty if no hidden folder)."""
     h = hidden_dir(hidden)
     if h is None or not (h / "labels.jsonl").exists():
         return {}

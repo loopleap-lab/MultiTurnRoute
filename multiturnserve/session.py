@@ -191,7 +191,7 @@ class Runtime:
             spec = str(folder / spec)
         rcls = get_router(spec)
         if rcls.trained:
-            ckpt = cfg.get("checkpoint") or os.path.join(os.environ.get("SRX_RUNS", "runs"), rcls.name)
+            ckpt = cfg.get("checkpoint") or os.path.join(os.environ.get("MTS_RUNS", "runs"), rcls.name)
             if not (Path(ckpt) / "router.pt").exists():
                 raise FileNotFoundError(f"router {rcls.name!r} needs training first: no {ckpt}/router.pt "
                                         f"(multiturnserve train --router {rcls.name} --out {ckpt})")

@@ -1,7 +1,7 @@
 """The `multiturnserve` command line.
 
   Serve       multiturnserve serve config.yaml [--port 8080]          the gateway your app talks to
-              multiturnserve train --router cor --out runs/cor         train a router on $SRX_DATA_DIR
+              multiturnserve train --router cor --out runs/cor         train a router on $MTS_DATA_DIR
               multiturnserve list                                      routers and serving backends
   Static      multiturnserve arena replay --router cor bao             train, replay over 41 cost weights -> results.json
               multiturnserve arena leaderboard results.json            -> LEADERBOARD.md
@@ -11,7 +11,7 @@
               multiturnserve arena judge --log runs/dyn/my-router
               multiturnserve arena score --log runs/dyn/my-router
               multiturnserve arena submit --log runs/dyn/my-router
-Data come from $SRX_DATA_DIR (default ./data); the hidden test labels from $SRX_HIDDEN_DIR.
+Data come from $MTS_DATA_DIR (default ./data); the hidden test labels from $MTS_HIDDEN_DIR.
 """
 from __future__ import annotations
 
@@ -24,7 +24,7 @@ DEFAULT_ROUTERS = ["bao", "cor", "full-history", "knn", "rag", "single-turn"]
 
 
 def _training_args(p) -> None:
-    p.add_argument("--data", help="data folder (default: $SRX_DATA_DIR, else ./data)")
+    p.add_argument("--data", help="data folder (default: $MTS_DATA_DIR, else ./data)")
     p.add_argument("--dataset", default="chat", choices=["chat", "lic"], help=argparse.SUPPRESS)
     p.add_argument("--models", nargs="*", help="model pool, in this order (default: the static track's 9)")
     p.add_argument("--batch", help="use one sampling batch of the data, e.g. pilot")
@@ -173,7 +173,7 @@ def parser() -> argparse.ArgumentParser:
     p = asub.add_parser("replay", help="static track: train routers, replay them on the test split, write results.json")
     p.add_argument("--routers", "--router", nargs="+", default=DEFAULT_ROUTERS, dest="routers",
                    help="router names or .py files (default: the six built-ins)")
-    p.add_argument("--hidden", help="folder with the hidden test labels (default: $SRX_HIDDEN_DIR)")
+    p.add_argument("--hidden", help="folder with the hidden test labels (default: $MTS_HIDDEN_DIR)")
     p.add_argument("--folds", type=int, default=1, help="K > 1: K-fold over conversations instead of the test split")
     p.add_argument("--dev", action="store_true", help="replay on a fifth of the training conversations (no hidden labels)")
     p.add_argument("--bootstrap", type=int, default=0, help="paired bootstrap resamples over test conversations")
@@ -207,14 +207,14 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("--max-turns", type=int, help="default: the task's number of original user turns")
     p.add_argument("--user-url", required=True, help="OpenAI-compatible base URL of the simulated user")
     p.add_argument("--user-model", default=USER_MODEL)
-    p.add_argument("--user-key-env", default="SRX_USER_API_KEY", help="environment variable with its API key")
+    p.add_argument("--user-key-env", default="MTS_USER_API_KEY", help="environment variable with its API key")
     p.set_defaults(func=cmd_run)
 
     p = asub.add_parser("judge", help="dynamic track: rate every logged answer")
     p.add_argument("--log", required=True)
     p.add_argument("--judge-url", required=True, help="OpenAI-compatible base URL of the judge")
     p.add_argument("--judge-model", default=JUDGE_MODEL)
-    p.add_argument("--judge-key-env", default="SRX_JUDGE_API_KEY", help="environment variable with its API key")
+    p.add_argument("--judge-key-env", default="MTS_JUDGE_API_KEY", help="environment variable with its API key")
     p.set_defaults(func=cmd_judge)
 
     p = asub.add_parser("score", help="dynamic track: quality and bill per cost weight, AUDC, peak (and QNC)")

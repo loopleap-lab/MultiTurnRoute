@@ -20,11 +20,11 @@ pytest -q                           # synthetic data, CPU, about 10 seconds
 
 | Variable | What | Default |
 |---|---|---|
-| `SRX_DATA_DIR` | the data folder (below) | `./data` |
-| `SRX_HIDDEN_DIR` | the hidden test labels, `labels.jsonl` (organizers only) | none |
-| `SRX_RUNS` | where `serve` looks for a trained router, `<SRX_RUNS>/<router>/router.pt` | `./runs` |
+| `MTS_DATA_DIR` | the data folder (below) | `./data` |
+| `MTS_HIDDEN_DIR` | the hidden test labels, `labels.jsonl` (organizers only) | none |
+| `MTS_RUNS` | where `serve` looks for a trained router, `<MTS_RUNS>/<router>/router.pt` | `./runs` |
 | `VLLM_API_KEY`, `OPENROUTER_API_KEY` | API keys of the serving backends | none |
-| `SRX_USER_API_KEY`, `SRX_JUDGE_API_KEY` | API keys of the dynamic track's user simulator and judge | none |
+| `MTS_USER_API_KEY`, `MTS_JUDGE_API_KEY` | API keys of the dynamic track's user simulator and judge | none |
 
 Keys are read from the environment when a request is sent; they are never written to a config, a log or a
 submission.
@@ -59,15 +59,15 @@ message. The gateway keeps one session per chat id in memory; a restart starts e
 multiturnserve train --router NAME|FILE.py --out DIR [training options]
 ```
 
-Trains the router on every training conversation of `$SRX_DATA_DIR` (or `--data`) and writes `DIR/router.pt`: the
+Trains the router on every training conversation of `$MTS_DATA_DIR` (or `--data`) and writes `DIR/router.pt`: the
 weights, the model list it was trained on, `lam` and the shared output-length heads. `serve` finds
-`runs/<router>/router.pt` by default (`checkpoint:` in the config, or `SRX_RUNS`).
+`runs/<router>/router.pt` by default (`checkpoint:` in the config, or `MTS_RUNS`).
 
 Training options (also taken by `arena replay`):
 
 | Option | Default | Meaning |
 |---|---|---|
-| `--data` | `$SRX_DATA_DIR`, else `./data` | data folder |
+| `--data` | `$MTS_DATA_DIR`, else `./data` | data folder |
 | `--models` | the static track's 9 | model pool, in this order (ties go to the first; the predictors' outputs follow it) |
 | `--batch` | all | use one sampling batch of the data, e.g. `pilot` |
 | `--seed` | 0 | random seed |
@@ -94,7 +94,7 @@ multiturnserve arena replay [--router NAME|FILE.py ...] [--hidden DIR] [--dev] [
 
 The static track: trains each router on the training split, replays it on the test split at 41 values of `lam`,
 and writes `<out>/<name>/results.json`. The default routers are the six built-ins. Test labels come from the data
-itself (the organizers' full copy) or from `--hidden` / `SRX_HIDDEN_DIR`; without them the replay stops and asks
+itself (the organizers' full copy) or from `--hidden` / `MTS_HIDDEN_DIR`; without them the replay stops and asks
 for `--dev`, which replays on a fifth of the training conversations instead. `--folds K` replays K folds over all
 conversations. `--bootstrap N` adds a paired bootstrap over test conversations.
 
@@ -133,7 +133,7 @@ The public data: training turns with every field; test turns without `labels` (`
 `judge_expected_score`, `judge_score`, `judge_repaired`), without the response texts and without any other field
 named like a score, a quality or a label. The test turns keep their inputs (history, query, original answer) and
 every model's token counts. The embeddings and `prices.json` are copied. `--hidden-out` gets `labels.jsonl`
-(`{"turn_id", "labels"}` per test turn), the file `SRX_HIDDEN_DIR` points at; it may not be inside `--out`.
+(`{"turn_id", "labels"}` per test turn), the file `MTS_HIDDEN_DIR` points at; it may not be inside `--out`.
 
 ### arena submit (static track)
 
@@ -149,9 +149,9 @@ Checks that the file registers one `Router` and packs it, the other files it imp
 ```bash
 multiturnserve arena run --config POOL.yaml --tasks TASKS.jsonl --out LOG --user-url URL
                         [--router NAME|FILE.py] [--lams L ...] [--repeats 1] [--limit N] [--max-turns T]
-                        [--user-model DeepSeek-V4.1-Flash-1017] [--user-key-env SRX_USER_API_KEY]
+                        [--user-model DeepSeek-V4.1-Flash-1017] [--user-key-env MTS_USER_API_KEY]
 multiturnserve arena judge --log LOG --judge-url URL [--judge-model NVIDIA-Nemotron-3.5-Super]
-                          [--judge-key-env SRX_JUDGE_API_KEY]
+                          [--judge-key-env MTS_JUDGE_API_KEY]
 multiturnserve arena score --log LOG [--reference OTHER_LOG]
 multiturnserve arena submit --log LOG [--out FILE.tar.gz]
 ```
@@ -186,7 +186,7 @@ models:                          # the models of each backend (the pool, in this
 log: logs/                       # one JSONL line per answered turn (no message texts)
 # optional
 lam: 0.5                         # cost weight of the router
-checkpoint: runs/cor             # a trained router (default: $SRX_RUNS/<router>, else runs/<router>)
+checkpoint: runs/cor             # a trained router (default: $MTS_RUNS/<router>, else runs/<router>)
 encoder: granite                 # granite (default for the built-in routers), a Hugging Face id, none, or hash:D (tests)
 plugins: [my_router.py]          # extra files that register routers or backends
 backends:                        # options per backend
@@ -260,7 +260,7 @@ cost, usage)`, `route(messages) -> Decision(model, quality, cost)`, `observe(out
 
 ## Data
 
-`$SRX_DATA_DIR`:
+`$MTS_DATA_DIR`:
 
 ```
 chat.jsonl                           one JSON object per conversation turn

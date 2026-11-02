@@ -3,7 +3,7 @@
 Test rows lose `labels` (judge_quality, judge_expected_score, judge_score, judge_repaired), the response texts and any
 other field named like a score or a quality; they keep the inputs (history, query, original answer) and every model's
 token counts, which the cost accounting needs. The labels go to a separate folder for the organizer
-(SRX_HIDDEN_DIR/labels.jsonl), never into the public one."""
+(MTS_HIDDEN_DIR/labels.jsonl), never into the public one."""
 import json
 import shutil
 from collections import Counter

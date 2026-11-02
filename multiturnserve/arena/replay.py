@@ -224,7 +224,7 @@ def evaluate(convs: list, emb: dict, models: list, args, routers: list, options:
     stats, all_test, mse = {}, [], []
     for f, (train_all, test) in enumerate(splits):
         if not test:
-            raise SystemExit("no test conversations with labels: the test labels are hidden (set SRX_HIDDEN_DIR on "
+            raise SystemExit("no test conversations with labels: the test labels are hidden (set MTS_HIDDEN_DIR on "
                              "the organizer's machine), or replay on held-out training conversations with --dev")
         print(f"split {f}: train {len(train_all)} test {len(test)}", flush=True)
         ctx = make_context(train_all, test, emb, models, args)

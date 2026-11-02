@@ -67,7 +67,7 @@ def _read(path: Path) -> list:
 
 def run(config, tasks: str, out: str, router: str | None = None, lams: list | None = None, repeats: int = 1,
         limit: int | None = None, max_turns: int | None = None, user_url: str = "", user_model: str = USER_MODEL,
-        user_key_env: str | None = "SRX_USER_API_KEY") -> Path:
+        user_key_env: str | None = "MTS_USER_API_KEY") -> Path:
     """Play every task card once per lambda and repeat; a stopped run continues where it stopped."""
     from ..session import Runtime
     out = Path(out)
@@ -117,7 +117,7 @@ def parse_score(text: str) -> int | None:
 
 
 def judge(log_dir: str, judge_url: str = "", judge_model: str = JUDGE_MODEL,
-          judge_key_env: str | None = "SRX_JUDGE_API_KEY") -> Path:
+          judge_key_env: str | None = "MTS_JUDGE_API_KEY") -> Path:
     """Rate every logged answer in its own context; a stopped run continues where it stopped."""
     d = Path(log_dir)
     rows, out = _read(d / "log.jsonl"), d / "judged.jsonl"

@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/static/logo-dark.png">
-    <img src="docs/static/logo-light.png" alt="MultiTurnServe" width="560">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-dark.png">
+    <img src="docs/assets/logo-light.png" alt="MultiTurnServe" width="560">
   </picture>
 </p>
 
@@ -26,8 +26,8 @@ states up to date and gives the bill.
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/static/overview-dark.png">
-    <img src="docs/static/overview-light.png" alt="MultiTurnServe: your app sends each message of a chat; the gateway keeps the chat's history and KV cache state, the router picks a model for the turn and a serving backend runs it; the reply, the turn's cost and a log line come out" width="880">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/overview-dark.png">
+    <img src="docs/assets/overview-light.png" alt="MultiTurnServe: your app sends each message of a chat; the gateway keeps the chat's history and KV cache state, the router picks a model for the turn and a serving backend runs it; the reply, the turn's cost and a log line come out" width="880">
   </picture>
 </p>
 
@@ -40,7 +40,7 @@ pip install -e ".[encoder]"          # live embeddings for the built-in routers 
 ```
 
 Python 3.10+. Serving and the tests run on CPU; the encoder is faster on a GPU. The routers train on the
-MultiTurnServe data: set `SRX_DATA_DIR` to its folder (layout in [docs/REFERENCE.md](docs/REFERENCE.md#data)).
+MultiTurnServe data: set `MTS_DATA_DIR` to its folder (layout in [docs/REFERENCE.md](docs/REFERENCE.md#data)).
 
 ## Get started
 
@@ -58,7 +58,7 @@ log: logs/
 ```
 
 ```bash
-multiturnserve train --router cor --out runs/cor    # once: trains CoR on $SRX_DATA_DIR
+multiturnserve train --router cor --out runs/cor    # once: trains CoR on $MTS_DATA_DIR
 multiturnserve serve configs/serve.yaml             # the gateway, on :8080
 ```
 
@@ -162,7 +162,7 @@ submitted routers.
 
 ```bash
 multiturnserve arena replay --router routers/my_router.py --dev     # locally, on a held-out part of train
-multiturnserve arena replay --router cor bao                        # organizers: needs SRX_HIDDEN_DIR
+multiturnserve arena replay --router cor bao                        # organizers: needs MTS_HIDDEN_DIR
 multiturnserve arena leaderboard runs/arena/static/results.json     # -> LEADERBOARD.md
 ```
 

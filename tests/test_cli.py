@@ -74,7 +74,7 @@ def test_serve_check(tmp_path, monkeypatch, capsys):
                          capsys=capsys)
     assert code == 0, err
     assert "my-router" in out and "gemma-e4b, gemma-26b-a4b, gemma-31b" in out
-    code, out, err = cli("serve", str(ROOT / "configs" / "serve.yaml"), "--check", env={"SRX_RUNS": str(tmp_path)},
+    code, out, err = cli("serve", str(ROOT / "configs" / "serve.yaml"), "--check", env={"MTS_RUNS": str(tmp_path)},
                          monkeypatch=monkeypatch, capsys=capsys)
     assert code != 0 and "multiturnserve train --router cor" in err
 
@@ -86,9 +86,9 @@ def test_replay_needs_hidden_labels_or_dev(tmp_path, monkeypatch, capsys):
     common = ["arena", "replay", "--router", "knn", "--data", str(tmp_path / "public"), "--models", *MODELS,
               "--out", str(tmp_path / "runs")]
     code, _, err = cli(*common, "--name", "a", capsys=capsys)
-    assert code != 0 and "SRX_HIDDEN_DIR" in err
+    assert code != 0 and "MTS_HIDDEN_DIR" in err
     assert cli(*common, "--name", "b", "--dev", capsys=capsys)[0] == 0
-    assert cli(*common, "--name", "c", env={"SRX_HIDDEN_DIR": str(tmp_path / "hidden")}, monkeypatch=monkeypatch,
+    assert cli(*common, "--name", "c", env={"MTS_HIDDEN_DIR": str(tmp_path / "hidden")}, monkeypatch=monkeypatch,
                capsys=capsys)[0] == 0
     assert cli("arena", "replay", "--router", "knn", "--data", str(root), "--models", *MODELS,
                "--out", str(tmp_path / "runs"), "--name", "d", capsys=capsys)[0] == 0
