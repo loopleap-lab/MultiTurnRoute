@@ -37,10 +37,10 @@ it keeps the two states a multi-turn router needs, and any router plugged into i
   <a href="docs/assets/overview.pdf"><img alt="MultiTurnServe at a glance: a multi-turn session and a config go in; MultiTurnServe keeps the session state (the dialogue state and each model's serving state, its KV cache), the router (Chain-of-Route, 5 others, or yours) selects a model, a serving backend runs it, and the arena evaluates routers on recorded conversations and with a simulated user; the reply and the billed tokens of the turn come out" src="docs/assets/overview.png" width="86%"></a>
 </p>
 
-**MultiTurnServe at a glance.** At every turn, MultiTurnServe maintains the dialogue state and the part of the
-session each model has cached; the router, Chain-of-Route by default, estimates quality from the former and cost
-from the latter, and the arena evaluates new routers against Chain-of-Route on held-out recorded conversations
-and with a simulated user.
+**MultiTurnServe at a glance.** At every turn, MultiTurnServe maintains the dialogue state and each model's serving
+state (its KV cache); the router, Chain-of-Route by default, estimates quality from the former and cost from the
+latter, and the arena evaluates new routers against Chain-of-Route on recorded conversations and with a simulated
+user.
 
 Routing a multi-turn session differs from routing single queries in two ways:
 
