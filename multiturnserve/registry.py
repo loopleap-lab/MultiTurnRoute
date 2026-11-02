@@ -23,7 +23,7 @@ def register_router(cls=None, *, name: str | None = None):
         if not n:
             raise ValueError(f"router class {c.__qualname__} needs a name")
         old = ROUTERS.get(n)
-        if old is not None and old is not c and old.__module__.startswith("sessionroutex."):
+        if old is not None and old is not c and old.__module__.startswith("multiturnserve."):
             raise ValueError(f"router {n!r} is built in ({old.__module__}.{old.__qualname__}); pick another name")
         c.name = n
         ROUTERS[n] = c

@@ -69,7 +69,7 @@ def build_routers(specs: list, ctx: Context, options: dict | None = None) -> lis
 
 
 def train(spec: str, args, data_path=None, out=None):
-    """Fit one router on every training conversation of the dataset and save it (sessionroutex train)."""
+    """Fit one router on every training conversation of the dataset and save it (multiturnserve train)."""
     from . import embeddings
     convs, models = data.load(getattr(args, "dataset", "chat"), args.models, data=data_path)
     split = lambda c: c.split or data.split_of(c.conv_id)  # noqa: E731

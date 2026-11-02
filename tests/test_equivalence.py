@@ -53,7 +53,7 @@ def same(a, b) -> bool:
 
 @pytest.mark.parametrize("folds", [1, 2])
 def test_replay_cli_matches_evaluate(ref, tmp_path, folds):
-    from sessionroutex.cli import main
+    from multiturnserve.cli import main
     torch.set_num_threads(4)
     ref.nn.LOSS["kind"] = "mse"
     convs, _ = ref.data.load("chat", MODELS)
@@ -72,7 +72,7 @@ def test_replay_cli_matches_evaluate(ref, tmp_path, folds):
 
 
 def test_per_turn_choices_match(ref):
-    from sessionroutex.arena import data, embeddings, replay
+    from multiturnserve.arena import data, embeddings, replay
     torch.set_num_threads(4)
     ref.nn.LOSS["kind"] = "mse"
     a = args()
@@ -104,7 +104,7 @@ def test_per_turn_choices_match(ref):
 
 def test_metrics_and_bootstrap_are_the_package_ones(ref):
     """Ported unit tests of the package: QNC_hull interpolation and pairwise bootstrap."""
-    from sessionroutex.arena import replay
+    from multiturnserve.arena import replay
     pts = [(0.0, 0.1), (0.2, 0.5), (0.1, 0.2)]
     assert replay.qnc_hull(pts, 0.35) == ref.simulate.qnc_hull(pts, 0.35)
     assert abs(replay.qnc_hull(pts, 0.35) - 0.15) < 1e-9

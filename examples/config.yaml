@@ -1,5 +1,5 @@
 # The website's example, runnable anywhere: your router, the echo backend and your backend (my_lab.py stands in
-# for your code). sessionroutex serve examples/config.yaml, then python examples/app.py
+# for your code). multiturnserve serve examples/config.yaml, then python examples/app.py
 router: my-router
 serving: [echo, my-backend]
 models:

@@ -18,7 +18,7 @@ class QualityHead:
 
     def __call__(self, turn, history=None) -> np.ndarray:
         if self.predict is None:
-            raise RuntimeError("this router is not trained: fit it (sessionroutex train) or load a checkpoint")
+            raise RuntimeError("this router is not trained: fit it (multiturnserve train) or load a checkpoint")
         if turn.emb is None:
             raise RuntimeError("this router reads turn embeddings; serve it with an encoder (encoder: granite)")
         q = self.q_hat.get(turn.chat_id) if turn.emb is self._emb else None

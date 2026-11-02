@@ -1,4 +1,4 @@
-# SessionRouteX reference
+# MultiTurnServe reference
 
 The full reference behind the [README](../README.md): install, every command and option, the serve config, the
 router and serving interfaces, the data format, the cost accounting and the rules of both arena tracks.
@@ -6,15 +6,15 @@ router and serving interfaces, the data format, the cost accounting and the rule
 ## Install
 
 ```bash
-git clone <this repository> && cd SessionRouteX
-pip install -e ".[serve,test]"      # the package, the `sessionroutex` command, the gateway (and pytest)
+git clone <this repository> && cd MultiTurnServe
+pip install -e ".[serve,test]"      # the package, the `multiturnserve` command, the gateway (and pytest)
 pip install -e ".[encoder]"         # transformers, for live embeddings with granite-4.2-3b
 pytest -q                           # synthetic data, CPU, about 10 seconds
 ```
 
 | Extra | Adds | Needed for |
 |---|---|---|
-| `serve` | fastapi, uvicorn | `sessionroutex serve` |
+| `serve` | fastapi, uvicorn | `multiturnserve serve` |
 | `encoder` | transformers | serving the built-in routers (they read turn embeddings) |
 | `test` | pytest, fastapi, httpx | the tests |
 
@@ -31,12 +31,12 @@ submission.
 
 ## Commands
 
-`sessionroutex --help` and `sessionroutex <command> --help` print the same.
+`multiturnserve --help` and `multiturnserve <command> --help` print the same.
 
 ### serve
 
 ```bash
-sessionroutex serve CONFIG [--host 127.0.0.1] [--port 8080] [--router NAME|FILE.py] [--log DIR] [--check]
+multiturnserve serve CONFIG [--host 127.0.0.1] [--port 8080] [--router NAME|FILE.py] [--log DIR] [--check]
 ```
 
 Loads the router, the backends and the encoder from the config and serves the gateway (needs `[serve]`).
@@ -44,7 +44,7 @@ Loads the router, the backends and the encoder from the config and serves the ga
 
 | Endpoint | Body | Returns |
 |---|---|---|
-| `POST /v1/chat/completions` | OpenAI chat request; the chat is named by a `chat_id` field, an `X-Chat-Id` header or the `user` field | an OpenAI `chat.completion` (`model` = the chosen model, `usage` with `prompt_tokens_details.cached_tokens`) plus `sessionroutex: {chat_id, turn, model, cost, decision: {quality, cost}}` |
+| `POST /v1/chat/completions` | OpenAI chat request; the chat is named by a `chat_id` field, an `X-Chat-Id` header or the `user` field | an OpenAI `chat.completion` (`model` = the chosen model, `usage` with `prompt_tokens_details.cached_tokens`) plus `multiturnserve: {chat_id, turn, model, cost, decision: {quality, cost}}` |
 | `POST /v1/route` | `{chat_id, messages}` | `{model, quality, cost, turn}`; the state does not change |
 | `POST /v1/observe` | `{chat_id, model, text, usage: {prompt_tokens, cached_tokens, output_tokens}[, cost][, query]}` | the chat's state |
 | `GET /v1/sessions/{chat_id}` | | `{chat_id, turns, total_cost, kv_cache, models}` |
@@ -56,7 +56,7 @@ message. The gateway keeps one session per chat id in memory; a restart starts e
 ### train
 
 ```bash
-sessionroutex train --router NAME|FILE.py --out DIR [training options]
+multiturnserve train --router NAME|FILE.py --out DIR [training options]
 ```
 
 Trains the router on every training conversation of `$SRX_DATA_DIR` (or `--data`) and writes `DIR/router.pt`: the
@@ -83,12 +83,12 @@ Training options (also taken by `arena replay`):
 
 ### list
 
-`sessionroutex list` prints the registered routers and serving backends.
+`multiturnserve list` prints the registered routers and serving backends.
 
 ### arena replay
 
 ```bash
-sessionroutex arena replay [--router NAME|FILE.py ...] [--hidden DIR] [--dev] [--folds K] [--bootstrap N]
+multiturnserve arena replay [--router NAME|FILE.py ...] [--hidden DIR] [--dev] [--folds K] [--bootstrap N]
                            [--name static] [--out runs/arena] [training options]
 ```
 
@@ -115,7 +115,7 @@ same `results.json` fields (tested on synthetic data in `tests/test_equivalence.
 ### arena leaderboard
 
 ```bash
-sessionroutex arena leaderboard RESULTS.json [--out LEADERBOARD.md] [--json site.json] [--note TEXT] [--source TEXT]
+multiturnserve arena leaderboard RESULTS.json [--out LEADERBOARD.md] [--json site.json] [--note TEXT] [--source TEXT]
 ```
 
 Writes the leaderboard: routers by AUDC with QNC, the cost to match the best single model as a share of that model's
@@ -126,7 +126,7 @@ the website). `--json` writes the same rows, with the curves, for the website.
 ### arena release
 
 ```bash
-sessionroutex arena release --data FULL_DIR --out PUBLIC_DIR [--hidden-out PRIVATE_DIR]
+multiturnserve arena release --data FULL_DIR --out PUBLIC_DIR [--hidden-out PRIVATE_DIR]
 ```
 
 The public data: training turns with every field; test turns without `labels` (`judge_quality`,
@@ -138,7 +138,7 @@ every model's token counts. The embeddings and `prices.json` are copied. `--hidd
 ### arena submit (static track)
 
 ```bash
-sessionroutex arena submit my_router.py [--files my_lab.py ...] [--out submission.tar.gz]
+multiturnserve arena submit my_router.py [--files my_lab.py ...] [--out submission.tar.gz]
 ```
 
 Checks that the file registers one `Router` and packs it, the other files it imports (`--files`) and a `meta.json`
@@ -147,13 +147,13 @@ Checks that the file registers one `Router` and packs it, the other files it imp
 ### arena run, judge, score, submit (dynamic track)
 
 ```bash
-sessionroutex arena run --config POOL.yaml --tasks TASKS.jsonl --out LOG --user-url URL
+multiturnserve arena run --config POOL.yaml --tasks TASKS.jsonl --out LOG --user-url URL
                         [--router NAME|FILE.py] [--lams L ...] [--repeats 1] [--limit N] [--max-turns T]
                         [--user-model DeepSeek-V4.1-Flash-1017] [--user-key-env SRX_USER_API_KEY]
-sessionroutex arena judge --log LOG --judge-url URL [--judge-model NVIDIA-Nemotron-3.5-Super]
+multiturnserve arena judge --log LOG --judge-url URL [--judge-model NVIDIA-Nemotron-3.5-Super]
                           [--judge-key-env SRX_JUDGE_API_KEY]
-sessionroutex arena score --log LOG [--reference OTHER_LOG]
-sessionroutex arena submit --log LOG [--out FILE.tar.gz]
+multiturnserve arena score --log LOG [--reference OTHER_LOG]
+multiturnserve arena submit --log LOG [--out FILE.tar.gz]
 ```
 
 - `run`: `POOL.yaml` is a serve config (your router, backends and models). `TASKS.jsonl` is in the `chat.jsonl`
@@ -173,7 +173,7 @@ sessionroutex arena submit --log LOG [--out FILE.tar.gz]
 
 The user simulator and the judge are any OpenAI-compatible endpoints (`--user-url`, `--judge-url` are base URLs,
 e.g. `https://host/v1`); the model names must be the ids those endpoints use. Both run at temperature 0 with the
-fixed prompts in `sessionroutex/arena/dynamic.py` (`PROMPT_VERSION`).
+fixed prompts in `multiturnserve/arena/dynamic.py` (`PROMPT_VERSION`).
 
 ## Serve config
 
@@ -219,7 +219,7 @@ class Router:
     def state(self) -> dict; def load_state(self, state)   # what save() / load_router() keep
 ```
 
-Register it with `@register_router`. `turn` (`sessionroutex.Turn`):
+Register it with `@register_router`. `turn` (`multiturnserve.Turn`):
 
 | Field | What |
 |---|---|
@@ -233,7 +233,7 @@ Register it with `@register_router`. `turn` (`sessionroutex.Turn`):
 `state` (`SessionState`): `history`, a tuple of `Exchange(query, answer, model)`, and `kv_cache`, a
 `CacheState` with `held[model]` tokens and `cached(model, n_prompt)`.
 
-Parts (`sessionroutex.parts`): `CacheCost` (each model's cached prefix at the cached price), `StaticCost` (every
+Parts (`multiturnserve.parts`): `CacheCost` (each model's cached prefix at the cached price), `StaticCost` (every
 prompt token at the full price), `SwitchCost(penalty)` (full price plus a penalty for leaving the previous model),
 `QualityHead(predict, models)` (a trained predictor), `LengthHead` (output length), `Encoder` (live embeddings).
 A cost part returns `Costs(values, scale, models, usd)`.
@@ -253,9 +253,9 @@ arguments.
 
 ### Sessions
 
-`sessionroutex.open(chat_id, gateway=":8080")` talks to a gateway: `chat(msg) -> Reply(chat_id, turn, model, text,
+`multiturnserve.open(chat_id, gateway=":8080")` talks to a gateway: `chat(msg) -> Reply(chat_id, turn, model, text,
 cost, usage)`, `route(messages) -> Decision(model, quality, cost)`, `observe(outcome)`, `state()`.
-`sessionroutex.open(chat_id, config="config.yaml")` makes a local session with the same calls plus
+`multiturnserve.open(chat_id, config="config.yaml")` makes a local session with the same calls plus
 `run(decision, messages) -> Outcome(model, text, usage, cost)`.
 
 ## Data
@@ -312,7 +312,7 @@ Static track:
 - Fixed for everyone: the 9 models and their order, the price table and the 41 cost weights
   (`configs/arena/static.yaml`), the train/test split, the judge labels.
 - Training uses the public training split only; the test labels stay with the organizers. A submission is a router
-  file (`decide()`, optionally `fit(ctx)`); the organizers replay it with `sessionroutex arena replay` from this
+  file (`decide()`, optionally `fit(ctx)`); the organizers replay it with `multiturnserve arena replay` from this
   repository's main branch, not from the submission.
 - Every model answered the same original history, so a pick does not change later turns. The quality of a pick is
   the judge's rating of that model's answer; its cost follows the KV cache along the routed path.

@@ -1,6 +1,6 @@
 # Not implemented yet
 
-What the website (sessionroutex_site.html, arena.html) or the design documents show that this repository does not
+What the website (multiturnserve_site.html, arena.html) or the design documents show that this repository does not
 do yet. Internal: keep this list in step with the code; the README lists only what runs.
 
 ## Routers
@@ -31,8 +31,8 @@ do yet. Internal: keep this list in step with the code; the README lists only wh
 
 - No public download location for the released data (`arena release` makes the folder; where it is published is
   open). No trained checkpoints are published (see the Hugging Face plan); `serve` with a built-in router needs
-  `sessionroutex train` on the data first.
-- The website says `pip install sessionroutex`; the package is not on PyPI (install from the repository).
+  `multiturnserve train` on the data first.
+- The website says `pip install multiturnserve`; the package is not on PyPI (install from the repository).
 
 ## Online serving
 

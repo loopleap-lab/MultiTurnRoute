@@ -1,6 +1,6 @@
 # Leaderboard
 
-Static track of SessionRouteX Arena: 3,671 test turns, 9 models (`configs/arena/static.yaml`). Every router is trained on the train split and replayed on the test split over 41 values of the cost weight. Source: the evaluation package's reported run (reported/chat_s0/results.json).
+Static track of MultiTurnServe Arena: 3,671 test turns, 9 models (`configs/arena/static.yaml`). Every router is trained on the train split and replayed on the test split over 41 values of the cost weight. Source: the evaluation package's reported run (reported/chat_s0/results.json).
 
 - **AUDC**: area under the cost-quality curve (cost normalized by the most expensive model). Higher is better.
 - **QNC**: the lowest normalized cost at which a router reaches the quality of the best single model, gemma-31b (0.7061); interpolated on the curve's upper envelope. Lower is better; - means never.
@@ -31,4 +31,4 @@ How much cost matters is a choice. For a weight w, each router is taken at its b
 | kNN | 0.6905 | 0.6351 | 0.6066 | 0.5871 | 0.5291 |
 | gemma-31b alone | 0.7061 | 0.6561 | 0.6061 | 0.5061 | 0.2061 |
 
-One run (seed 0) of the six built-in routers with the default options; there is no variance across seeds yet. Bao et al. is a simplified reimplementation (`sessionroutex/routers/bao`), not the authors' code. Reproduce with `sessionroutex arena replay --seed 0` on the full data (the test labels are held by the organizers).
+One run (seed 0) of the six built-in routers with the default options; there is no variance across seeds yet. Bao et al. is a simplified reimplementation (`multiturnserve/routers/bao`), not the authors' code. Reproduce with `multiturnserve arena replay --seed 0` on the full data (the test labels are held by the organizers).

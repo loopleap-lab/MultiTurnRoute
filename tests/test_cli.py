@@ -14,8 +14,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def cli(*args, env=None, monkeypatch=None, capsys=None):
-    """Run `sessionroutex ARGS` in this process; returns (exit code, stdout, stderr)."""
-    from sessionroutex.cli import main
+    """Run `multiturnserve ARGS` in this process; returns (exit code, stdout, stderr)."""
+    from multiturnserve.cli import main
     for k, v in (env or {}).items():
         monkeypatch.setenv(k, v)
     code = 0
@@ -30,7 +30,7 @@ def cli(*args, env=None, monkeypatch=None, capsys=None):
 
 
 def test_entry_point_and_help():
-    r = subprocess.run([sys.executable, "-m", "sessionroutex.cli", "arena", "--help"], capture_output=True,
+    r = subprocess.run([sys.executable, "-m", "multiturnserve.cli", "arena", "--help"], capture_output=True,
                        text=True, env={**os.environ, "CUDA_VISIBLE_DEVICES": ""}, cwd=ROOT)
     assert r.returncode == 0
     for c in ("replay", "leaderboard", "release", "run", "judge", "score", "submit"):
@@ -38,7 +38,7 @@ def test_entry_point_and_help():
 
 
 def test_help_lists_every_command(capsys):
-    from sessionroutex.cli import parser
+    from multiturnserve.cli import parser
     text = parser().format_help()
     for c in ("serve", "train", "list", "arena"):
         assert c in text
@@ -62,9 +62,9 @@ def test_serve_config_is_the_websites():
 
 
 def test_static_config_is_the_packaged_one():
-    from sessionroutex.pricing import STATIC
+    from multiturnserve.pricing import STATIC
     assert yaml.safe_load((ROOT / "configs" / "arena" / "static.yaml").read_text()) == STATIC
-    from sessionroutex.arena.replay import LAMBDAS
+    from multiturnserve.arena.replay import LAMBDAS
     lam = STATIC["lambdas"]
     assert len(LAMBDAS) == lam["n_kappa"] + 1 == 41 and len(STATIC["models"]) == 9
 
@@ -76,11 +76,11 @@ def test_serve_check(tmp_path, monkeypatch, capsys):
     assert "my-router" in out and "gemma-e4b, gemma-26b-a4b, gemma-31b" in out
     code, out, err = cli("serve", str(ROOT / "configs" / "serve.yaml"), "--check", env={"SRX_RUNS": str(tmp_path)},
                          monkeypatch=monkeypatch, capsys=capsys)
-    assert code != 0 and "sessionroutex train --router cor" in err
+    assert code != 0 and "multiturnserve train --router cor" in err
 
 
 def test_replay_needs_hidden_labels_or_dev(tmp_path, monkeypatch, capsys):
-    from sessionroutex.arena.release import release
+    from multiturnserve.arena.release import release
     root = write_dataset(tmp_path / "data")
     release(root, tmp_path / "public", tmp_path / "hidden")
     common = ["arena", "replay", "--router", "knn", "--data", str(tmp_path / "public"), "--models", *MODELS,

@@ -4,10 +4,10 @@ import json
 import numpy as np
 import pytest
 
-import sessionroutex as srx
+import multiturnserve as srx
 from fakes import PRICES, Scripted
-from sessionroutex.pricing import CacheState, static_cost, turn_cost
-from sessionroutex.serving.echo import Echo
+from multiturnserve.pricing import CacheState, static_cost, turn_cost
+from multiturnserve.serving.echo import Echo
 
 
 def runtime(tmp_path=None):
@@ -73,7 +73,7 @@ def test_session_state_after_and_usage_formats():
 
 
 def test_pick_ties_go_to_the_first_model_and_lam_trades_cost():
-    from sessionroutex.types import Costs
+    from multiturnserve.types import Costs
     r = srx.Router()
     c = Costs([1.0, 3.0], 3.0, ("a", "b"), [1.0, 3.0])
     r.lam = 0.0

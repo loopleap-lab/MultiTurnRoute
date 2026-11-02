@@ -5,8 +5,8 @@ import tarfile
 import pytest
 
 from fakes import PRICES, FakeOpenAI, Scripted  # noqa: F401
-from sessionroutex.arena import dynamic
-from sessionroutex.cli import main
+from multiturnserve.arena import dynamic
+from multiturnserve.cli import main
 from synth import write_dataset
 
 

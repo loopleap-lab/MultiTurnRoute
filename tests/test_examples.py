@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-import sessionroutex as srx
+import multiturnserve as srx
 from synth import write_dataset
 
 EX = Path(__file__).resolve().parents[1] / "examples"
@@ -24,7 +24,7 @@ def free_port() -> int:
 @pytest.fixture
 def gateway(tmp_path):
     uvicorn = pytest.importorskip("uvicorn")
-    from sessionroutex.gateway import create_app
+    from multiturnserve.gateway import create_app
     rt = srx.Runtime.from_config(str(EX / "config.yaml"), log=str(tmp_path / "logs"))
     port = free_port()
     server = uvicorn.Server(uvicorn.Config(create_app(rt), host="127.0.0.1", port=port, log_level="warning"))
@@ -41,7 +41,7 @@ def gateway(tmp_path):
 
 def test_app_routes_every_turn_through_the_gateway(gateway, monkeypatch, capsys):
     url, rt, tmp = gateway
-    import sessionroutex.client as client
+    import multiturnserve.client as client
     real = client.gateway_url
     monkeypatch.setattr(client, "gateway_url", lambda g: url if g == ":8080" else real(g))
     runpy.run_path(str(EX / "app.py"), run_name="__main__")
@@ -53,7 +53,7 @@ def test_app_routes_every_turn_through_the_gateway(gateway, monkeypatch, capsys)
 
 
 def test_my_router_and_my_backend_register():
-    from sessionroutex.registry import get_router, get_serving
+    from multiturnserve.registry import get_router, get_serving
     R = get_router(str(EX / "my_router.py"))
     B = get_serving(str(EX / "my_backend.py"))
     assert R.name == "my-router" and B.name == "my-backend" and B.models == ["gemma-26b-a4b", "gemma-31b"]
@@ -63,7 +63,7 @@ def test_my_router_and_my_backend_register():
 
 
 def test_my_router_in_the_static_track(tmp_path):
-    from sessionroutex.cli import main
+    from multiturnserve.cli import main
     root = write_dataset(tmp_path / "data")
     main(["arena", "replay", "--router", str(EX / "my_router.py"), "--data", str(root), "--models", "gemma-e4b",
           "gemma-31b", "mistral-medium-128b", "--dev", "--out", str(tmp_path), "--name", "mine"])

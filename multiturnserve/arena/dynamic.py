@@ -189,7 +189,7 @@ def submit_router(router_file: str, out: str | None = None, extra: list | None =
         raise SystemExit(f"{router_file}: the router must subclass Router and define decide()")
     files = [Path(router_file)] + [Path(f) for f in extra or []]
     meta = {"track": "static", "router": cls.name, "files": {f.name: hashlib.sha256(f.read_bytes()).hexdigest()
-                                                             for f in files}, "sessionroutex": __version__}
+                                                             for f in files}, "multiturnserve": __version__}
     out = Path(out or "submission.tar.gz")
     with tarfile.open(out, "w:gz") as tar:
         for f in files:

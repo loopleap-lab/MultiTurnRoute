@@ -4,12 +4,12 @@ import types
 import numpy as np
 import pytest
 
-from sessionroutex import load_router
-from sessionroutex.arena import data, embeddings
-from sessionroutex.arena.replay import replay_turns, run_conversation
-from sessionroutex.arena.train import build_routers, make_context
-from sessionroutex.routers import BUILTIN
-from sessionroutex.types import SessionState
+from multiturnserve import load_router
+from multiturnserve.arena import data, embeddings
+from multiturnserve.arena.replay import replay_turns, run_conversation
+from multiturnserve.arena.train import build_routers, make_context
+from multiturnserve.routers import BUILTIN
+from multiturnserve.types import SessionState
 from synth import MODELS, write_dataset
 
 

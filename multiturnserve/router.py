@@ -93,7 +93,7 @@ class Router:
 
 
 def load_router(path, spec: str | None = None) -> Router:
-    """A trained router from a folder written by Router.save (sessionroutex train). spec: the router name or plugin
+    """A trained router from a folder written by Router.save (multiturnserve train). spec: the router name or plugin
     file, when the checkpoint comes from a plugin."""
     import torch
     from .parts.length import LengthHead

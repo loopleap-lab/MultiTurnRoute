@@ -5,8 +5,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import numpy as np
 
-from sessionroutex import Router, register_router
-from sessionroutex.parts import CacheCost
+from multiturnserve import Router, register_router
+from multiturnserve.parts import CacheCost
 
 PRICES = {"small": {"input": 1.0, "cached": 0.1, "output": 2.0},     # USD per 1M tokens
           "big": {"input": 10.0, "cached": 1.0, "output": 30.0}}

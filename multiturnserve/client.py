@@ -1,6 +1,6 @@
-"""The app's side: sessionroutex.open(chat_id, gateway=":8080") -> a session that talks to a running gateway.
+"""The app's side: multiturnserve.open(chat_id, gateway=":8080") -> a session that talks to a running gateway.
 
-  s = sessionroutex.open("chat-1", gateway=":8080")
+  s = multiturnserve.open("chat-1", gateway=":8080")
   reply = s.chat("Summarize this paper")      # route, run, observe on the gateway
   print(reply.turn, reply.model, reply.cost)
 
@@ -43,7 +43,7 @@ class RemoteSession:
         r = self._post("/v1/chat/completions", {"chat_id": self.chat_id, "messages": self.messages})
         text = r["choices"][0]["message"]["content"]
         self.messages.append({"role": "assistant", "content": text})
-        x = r["sessionroutex"]
+        x = r["multiturnserve"]
         return Reply(self.chat_id, x["turn"], x["model"], text, x["cost"], Usage.of(r["usage"]))
 
     def route(self, messages: list | None = None) -> Decision:

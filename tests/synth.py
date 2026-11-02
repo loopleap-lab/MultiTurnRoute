@@ -4,7 +4,7 @@ from pathlib import Path
 
 import numpy as np
 
-from sessionroutex.pricing import PRICES
+from multiturnserve.pricing import PRICES
 
 MODELS = ["granite-3b", "gemma-e4b", "gemma-31b", "mistral-medium-128b"]
 

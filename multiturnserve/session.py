@@ -194,7 +194,7 @@ class Runtime:
             ckpt = cfg.get("checkpoint") or os.path.join(os.environ.get("SRX_RUNS", "runs"), rcls.name)
             if not (Path(ckpt) / "router.pt").exists():
                 raise FileNotFoundError(f"router {rcls.name!r} needs training first: no {ckpt}/router.pt "
-                                        f"(sessionroutex train --router {rcls.name} --out {ckpt})")
+                                        f"(multiturnserve train --router {rcls.name} --out {ckpt})")
             router = load_router(ckpt, spec)
         else:
             router = rcls()

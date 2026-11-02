@@ -3,8 +3,8 @@ from types import SimpleNamespace
 
 import numpy as np
 
-from sessionroutex.pricing import PRICES
-from sessionroutex.serving.echo import Echo
+from multiturnserve.pricing import PRICES
+from multiturnserve.serving.echo import Echo
 
 STRENGTH = {"gemma-e4b": 0.55, "gemma-26b-a4b": 0.68, "gemma-31b": 0.70, "mistral-medium-128b": 0.72}
 

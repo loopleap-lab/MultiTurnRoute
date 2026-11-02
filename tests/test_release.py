@@ -1,8 +1,8 @@
 """The public release keeps every training field and drops every score of the test turns."""
 import json
 
-from sessionroutex.arena import data
-from sessionroutex.arena.release import release
+from multiturnserve.arena import data
+from multiturnserve.arena.release import release
 from synth import MODELS, write_dataset
 
 

@@ -6,9 +6,9 @@ import pytest
 pytest.importorskip("fastapi")
 from fastapi.testclient import TestClient  # noqa: E402
 
-import sessionroutex as srx  # noqa: E402
+import multiturnserve as srx  # noqa: E402
 from fakes import PRICES, FakeOpenAI, Scripted  # noqa: E402,F401
-from sessionroutex.gateway import create_app  # noqa: E402
+from multiturnserve.gateway import create_app  # noqa: E402
 from synth import MODELS, write_dataset  # noqa: E402
 
 
@@ -28,12 +28,12 @@ def test_chat_completions_keep_one_session_per_chat(tmp_path):
     assert r["choices"][0]["message"]["content"] == "echo: a b c"
     assert r["usage"] == {"prompt_tokens": 4, "completion_tokens": 4, "total_tokens": 8,
                           "prompt_tokens_details": {"cached_tokens": 0}}
-    assert r["sessionroutex"]["turn"] == 1 and r["sessionroutex"]["cost"] == pytest.approx(12e-6)
+    assert r["multiturnserve"]["turn"] == 1 and r["multiturnserve"]["cost"] == pytest.approx(12e-6)
     msgs += [{"role": "assistant", "content": "echo: a b c"}, {"role": "user", "content": "d e"}]
     r = c.post("/v1/chat/completions", json={"messages": msgs}, headers={"X-Chat-Id": "x"}).json()
-    assert r["sessionroutex"]["turn"] == 2 and r["usage"]["prompt_tokens_details"]["cached_tokens"] == 8
+    assert r["multiturnserve"]["turn"] == 2 and r["usage"]["prompt_tokens_details"]["cached_tokens"] == 8
     r = c.post("/v1/chat/completions", json={"user": "y", "messages": msgs[:1]}).json()    # another chat
-    assert r["sessionroutex"]["turn"] == 1
+    assert r["multiturnserve"]["turn"] == 1
     st = c.get("/v1/sessions/x").json()
     assert st["turns"] == 2 and st["kv_cache"] == {"small": 14} and st["models"] == ["small", "small"]
     assert c.get("/v1/sessions/nope").status_code == 404
@@ -65,7 +65,7 @@ def test_client_open_chat_against_the_gateway():
 
 @pytest.fixture(scope="module")
 def cor_ckpt(tmp_path_factory):
-    from sessionroutex.cli import main
+    from multiturnserve.cli import main
     root = write_dataset(tmp_path_factory.mktemp("data"))
     out = tmp_path_factory.mktemp("runs") / "cor"
     main(["train", "--router", "cor", "--data", str(root), "--models", *MODELS, "--epochs", "2", "--out", str(out)])
@@ -90,7 +90,7 @@ def test_trained_cor_routes_live_chats(cor_ckpt, tmp_path):
 
 
 def test_untrained_router_says_how_to_train(tmp_path):
-    with pytest.raises(FileNotFoundError, match="sessionroutex train --router cor"):
+    with pytest.raises(FileNotFoundError, match="multiturnserve train --router cor"):
         srx.Runtime.from_config({"router": "cor", "checkpoint": str(tmp_path / "none"), "serving": ["echo"],
                                  "models": {"echo": ["gemma-31b"]}})
     with pytest.raises(ValueError, match="unknown config key"):
@@ -108,7 +108,7 @@ def test_vllm_backend_reads_cached_tokens_and_key_from_env(monkeypatch):
                 {"role": "user", "content": "more"}]
         r = c.post("/v1/chat/completions", json={"chat_id": "x", "messages": msgs}).json()
         assert r["usage"]["prompt_tokens"] == 30 and r["usage"]["prompt_tokens_details"]["cached_tokens"] == 15
-        assert r["sessionroutex"]["cost"] == pytest.approx((15 * 1.0 + 15 * 0.1 + 5 * 2.0) / 1e6)
+        assert r["multiturnserve"]["cost"] == pytest.approx((15 * 1.0 + 15 * 0.1 + 5 * 2.0) / 1e6)
         req = fake.requests[-1]
         assert req["path"] == "/v1/chat/completions" and req["body"]["model"] == "org/small-model"
         assert req["auth"] == "Bearer not-a-real-key"
@@ -117,7 +117,7 @@ def test_vllm_backend_reads_cached_tokens_and_key_from_env(monkeypatch):
 
 
 def test_openrouter_asks_for_usage():
-    from sessionroutex.serving.openrouter import OpenRouter
+    from multiturnserve.serving.openrouter import OpenRouter
     b = OpenRouter(models=["gemma-31b"])
     assert b.base_url == "https://openrouter.ai/api/v1" and b.api_key_env == "OPENROUTER_API_KEY"
     assert b.extra == {"usage": {"include": True}} and b.prices("gemma-31b")["cached"] == 0.04

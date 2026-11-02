@@ -1,16 +1,16 @@
-"""The `sessionroutex` command line.
+"""The `multiturnserve` command line.
 
-  Serve       sessionroutex serve config.yaml [--port 8080]          the gateway your app talks to
-              sessionroutex train --router cor --out runs/cor         train a router on $SRX_DATA_DIR
-              sessionroutex list                                      routers and serving backends
-  Static      sessionroutex arena replay --router cor bao             train, replay over 41 cost weights -> results.json
-              sessionroutex arena leaderboard results.json            -> LEADERBOARD.md
-              sessionroutex arena release --data DIR --out DIR        public data: test turns without labels
-              sessionroutex arena submit my_router.py                 pack a router for the organizers' replay
-  Dynamic     sessionroutex arena run --config serve.yaml --tasks test.jsonl --out runs/dyn/my-router
-              sessionroutex arena judge --log runs/dyn/my-router
-              sessionroutex arena score --log runs/dyn/my-router
-              sessionroutex arena submit --log runs/dyn/my-router
+  Serve       multiturnserve serve config.yaml [--port 8080]          the gateway your app talks to
+              multiturnserve train --router cor --out runs/cor         train a router on $SRX_DATA_DIR
+              multiturnserve list                                      routers and serving backends
+  Static      multiturnserve arena replay --router cor bao             train, replay over 41 cost weights -> results.json
+              multiturnserve arena leaderboard results.json            -> LEADERBOARD.md
+              multiturnserve arena release --data DIR --out DIR        public data: test turns without labels
+              multiturnserve arena submit my_router.py                 pack a router for the organizers' replay
+  Dynamic     multiturnserve arena run --config serve.yaml --tasks test.jsonl --out runs/dyn/my-router
+              multiturnserve arena judge --log runs/dyn/my-router
+              multiturnserve arena score --log runs/dyn/my-router
+              multiturnserve arena submit --log runs/dyn/my-router
 Data come from $SRX_DATA_DIR (default ./data); the hidden test labels from $SRX_HIDDEN_DIR.
 """
 from __future__ import annotations
@@ -79,9 +79,9 @@ def cmd_train(a) -> None:
 
 def cmd_list(a) -> None:
     from .registry import ROUTERS, SERVING, list_routers, list_serving
-    print("routers:  " + ", ".join(f"{n}{'' if ROUTERS[n].__module__.startswith('sessionroutex.') else ' (plugin)'}"
+    print("routers:  " + ", ".join(f"{n}{'' if ROUTERS[n].__module__.startswith('multiturnserve.') else ' (plugin)'}"
                                    for n in list_routers()))
-    print("serving:  " + ", ".join(f"{n}{'' if SERVING[n].__module__.startswith('sessionroutex.') else ' (plugin)'}"
+    print("serving:  " + ", ".join(f"{n}{'' if SERVING[n].__module__.startswith('multiturnserve.') else ' (plugin)'}"
                                    for n in list_serving()))
 
 
@@ -145,7 +145,7 @@ def cmd_submit(a) -> None:
 
 def parser() -> argparse.ArgumentParser:
     from .arena.dynamic import JUDGE_MODEL, USER_MODEL
-    ap = argparse.ArgumentParser(prog="sessionroutex", description=__doc__,
+    ap = argparse.ArgumentParser(prog="multiturnserve", description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
 
@@ -167,7 +167,7 @@ def parser() -> argparse.ArgumentParser:
     p = sub.add_parser("list", help="routers and serving backends")
     p.set_defaults(func=cmd_list)
 
-    arena = sub.add_parser("arena", help="SessionRouteX Arena: static and dynamic tracks")
+    arena = sub.add_parser("arena", help="MultiTurnServe Arena: static and dynamic tracks")
     asub = arena.add_subparsers(dest="arena_cmd", required=True)
 
     p = asub.add_parser("replay", help="static track: train routers, replay them on the test split, write results.json")
@@ -238,7 +238,7 @@ def main(argv: list | None = None) -> None:
     except (FileNotFoundError, KeyError, ValueError) as e:
         if "--debug" in (argv or sys.argv):
             raise
-        sys.exit(f"sessionroutex: {e}")
+        sys.exit(f"multiturnserve: {e}")
 
 
 if __name__ == "__main__":
