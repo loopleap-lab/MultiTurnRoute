@@ -18,10 +18,11 @@ Compares LLM routers on real multi-turn conversations, by answer quality and cos
 
 - **Dynamic track**: the session runs live. A fixed simulated user reads each reply and writes the next message,
   and routers are compared on whole sessions within the same model pool. You run your own models with your own
-  API keys.
+  API keys. The tasks are a file you provide, in the `chat.jsonl` format; the test conversations are not public
+  yet.
 
   ```bash
-  multiturnserve arena run    --config pool.yaml --tasks test.jsonl --out runs/dyn/mine --user-url URL
+  multiturnserve arena run    --config pool.yaml --tasks my_tasks.jsonl --out runs/dyn/mine --user-url URL
   multiturnserve arena judge  --log runs/dyn/mine --judge-url URL
   multiturnserve arena score  --log runs/dyn/mine
   multiturnserve arena submit --log runs/dyn/mine

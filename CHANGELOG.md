@@ -29,6 +29,4 @@ First release. The code went in on 2026-10-30, ported from the evaluation packag
 - Documentation: `docs/user-guide.md`, `docs/architecture.md`, `docs/routers.md`, `docs/backends.md`,
   `docs/FAQ.md`, `ROADMAP.md` and this changelog.
 
-Renamed from SessionRouteX to MultiTurnServe on 2026-11-02: the Python package and the command
-`sessionroutex` became `multiturnserve`, the environment variables `SRX_*` became `MTS_*`, and `docs/static/`
-became `docs/assets/`.
+Renamed from SessionRouteX on 2026-11-02 (package and command `multiturnserve`, environment variables `MTS_*`).

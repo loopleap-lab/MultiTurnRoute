@@ -1,11 +1,11 @@
-"""`multiturnserve serve`: an HTTP gateway with an OpenAI-compatible /v1/chat/completions. Each request names its chat
-(field "chat_id", header X-Chat-Id, or the OpenAI "user" field); the gateway keeps one session per chat, routes the
-turn, runs the chosen model and updates the chat's state from the reported usage. Needs the [serve] extra.
+"""`multiturnserve serve`: an HTTP gateway with an OpenAI-compatible /v1/chat/completions. Each request names its session
+(field "chat_id", header X-Chat-Id, or the OpenAI "user" field); the gateway keeps one state per session, routes the
+turn, runs the chosen model and updates the session's state from the reported usage. Needs the [serve] extra.
 
   POST /v1/chat/completions   {chat_id, messages}  -> chat.completion (+ "multiturnserve": turn, model, cost)
   POST /v1/route              {chat_id, messages}  -> {model, quality, cost, turn}   (no state change)
-  POST /v1/observe            {chat_id, model, text, usage[, cost]}  -> the chat's state
-  GET  /v1/sessions/{chat_id}                      -> the chat's state
+  POST /v1/observe            {chat_id, model, text, usage[, cost]}  -> the session's state
+  GET  /v1/sessions/{chat_id}                      -> the session's state
   GET  /v1/models, /health
 """
 from __future__ import annotations
@@ -30,7 +30,7 @@ def create_app(runtime):
     def chat_of(body: dict, header: str | None) -> str:
         cid = body.get("chat_id") or header or body.get("user")
         if not cid:
-            raise HTTPException(400, "name the chat: a chat_id field, an X-Chat-Id header, or the user field")
+            raise HTTPException(400, "name the session: a chat_id field, an X-Chat-Id header, or the user field")
         return str(cid)
 
     def messages_of(body: dict) -> list:
@@ -56,7 +56,7 @@ def create_app(runtime):
             d = s.route(msgs)
             try:
                 o = s.run(d, msgs)
-            except Exception as e:  # the backend failed; the chat's state is unchanged
+            except Exception as e:  # the backend failed; the session's state is unchanged
                 s._pending = None
                 raise HTTPException(502, f"{d.model} on {runtime.serving[d.model].name}: {e}") from None
             s.observe(o)
@@ -91,7 +91,7 @@ def create_app(runtime):
     @app.get("/v1/sessions/{chat_id}")
     def session(chat_id: str):
         if chat_id not in runtime.sessions:
-            raise HTTPException(404, f"no chat {chat_id!r}")
+            raise HTTPException(404, f"no session {chat_id!r}")
         return runtime.sessions[chat_id].summary()
 
     return app

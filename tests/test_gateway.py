@@ -63,6 +63,14 @@ def test_client_open_chat_against_the_gateway():
     assert s.state()["turns"] == 3
 
 
+def test_client_refuses_a_session_id_the_gateway_already_has():
+    c = client(ECHO)
+    mts.open("chat-1", gateway=c).chat("a b c")
+    with pytest.raises(RuntimeError, match="restart the gateway or use a new session id"):
+        mts.open("chat-1", gateway=c).chat("a b c")
+    assert mts.open("chat-2", gateway=c).chat("a b c").turn == 1
+
+
 @pytest.fixture(scope="module")
 def cor_ckpt(tmp_path_factory):
     from multiturnserve.cli import main

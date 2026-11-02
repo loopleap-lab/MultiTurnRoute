@@ -1,8 +1,8 @@
-"""Load the dataset (chat or lic) into immutable Turn / Conversation objects.
+"""Load the dataset (chat.jsonl) into immutable Turn / Conversation objects.
 
-Per turn: quality of every model in [0, 1] (chat: judge_quality; lic: evaluator_score), the tokens it read and wrote.
+Per turn: quality of every model in [0, 1] (judge_quality), the tokens it read and wrote.
 Only the longest prefix of consecutive turns where every model has a label is kept (a missing middle turn would break
-the cost accounting of a routed path). Splits come from the dataset: chat `split` (train/test), lic `fold` (0-4).
+the cost accounting of a routed path). The split comes from the dataset's `split` column (train/test).
 
 The data folder is MTS_DATA_DIR (default ./data): chat.jsonl, embeddings/emb_chat_granite3b.npz, prices.json. In the
 public release the test turns carry no labels; the organizer's labels are in MTS_HIDDEN_DIR/labels.jsonl
@@ -46,18 +46,18 @@ class Turn:
 class Conversation:
     conv_id: str
     source: str
-    split: str | None = None   # chat: "train" / "test"
-    fold: int | None = None    # lic: 0-4
+    split: str | None = None   # "train" / "test"
+    fold: int | None = None    # a fold column, for datasets that have one
     turns: tuple = field(default_factory=tuple)
 
 
 def split_of(conv_id: str, test_frac: float = 0.2) -> str:
-    """80/20 by conversation (md5 of the id); identical to the dataset's chat `split` column."""
+    """80/20 by conversation (md5 of the id); identical to the dataset's `split` column."""
     return "test" if int(hashlib.md5(conv_id.encode()).hexdigest(), 16) % 1000 < test_frac * 1000 else "train"
 
 
 def fold_of(conv_id: str, k: int) -> int:
-    """K folds by conversation (md5 of the id + "#fold"); for k = 5 identical to the dataset's lic `fold` column."""
+    """K folds by conversation (md5 of the id + "#fold"); for k = 5 identical to a dataset's `fold` column."""
     return int(hashlib.md5((conv_id + "#fold").encode()).hexdigest(), 16) % k
 
 
@@ -76,7 +76,7 @@ def hidden_labels(hidden=None) -> dict:
 
 
 def load(name: str = "chat", models: list | None = None, batch: str | None = None, data=None, hidden=None) -> tuple:
-    """Return (conversations, models). name: "chat" or "lic"; batch (chat only): keep one sampling batch, e.g. "pilot".
+    """Return (conversations, models). name: the dataset file (default chat.jsonl); batch: keep one sampling batch, e.g. "pilot".
     Streams the JSONL file and keeps only the fields routing needs (no response texts)."""
     models = models or MODELS
     extra = hidden_labels(hidden)

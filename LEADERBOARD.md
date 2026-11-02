@@ -1,6 +1,6 @@
 # Leaderboard
 
-Static track of MultiTurnServe Arena: 3,671 test turns, 9 models (`configs/arena/static.yaml`). Every router is trained on the train split and replayed on the test split over 41 values of the cost weight. Source: the reported run of the offline evaluation package that `arena replay` ports (seed 0, default options).
+Static track of MultiTurnServe Arena: 3,671 test turns, 9 models (`configs/arena/static.yaml`). Every router is trained on the train split and replayed on the test split over 41 values of its cost weight lam. Source: the reported run of the offline evaluation package that `arena replay` ports (seed 0, default options).
 
 - **AUDC**: area under the cost-quality curve (cost normalized by the most expensive model). Higher is better.
 - **QNC**: the lowest normalized cost at which a router reaches the quality of the best single model, gemma-31b (0.7061); interpolated on the curve's upper envelope. Lower is better; - means never.
@@ -17,11 +17,11 @@ Static track of MultiTurnServe Arena: 3,671 test turns, 9 models (`configs/arena
 | 6 | kNN (`knn`) | 0.6858 | - | - | 0.6905 |
 | | gemma-31b alone (reference) | | 0.0462 | 100% | 0.7061 |
 
-CoR's 74% is where the upper envelope of its curve reaches gemma-31b's quality (0.7061). The website quotes another point of the same curve: at cost weight w = 0.12 (score = quality - w x cost, as in the table below), CoR's best point reaches quality 0.7258 at 84% of gemma-31b's cost.
+CoR's 74% is where the upper envelope of its curve reaches gemma-31b's quality (0.7061). The website quotes another point of the same curve: at score weight w = 0.12 (score = quality - w x cost, as in the table below), CoR's best point reaches quality 0.7258 at 84% of gemma-31b's cost.
 
-### Score at a cost weight
+### Score at a score weight w
 
-How much cost matters is a choice. For a weight w, each router is taken at its best point of the curve for quality - w x cost, with cost as a share of what gemma-31b alone costs.
+How much cost matters is a choice. For a score weight w, each router is taken at its best point of the curve for score = quality - w x cost, with cost as a share of what gemma-31b alone costs. The score weight w is not the router's cost weight lam. lam sets each pick, the model with the highest (1 - lam) * quality - lam * cost / (the most expensive model's cost), and sweeping lam traces a router's curve; w only chooses a point on that curve after the replay.
 
 | Router | w = 0 | w = 0.05 | w = 0.1 | w = 0.2 | w = 0.5 |
 |---|---|---|---|---|---|

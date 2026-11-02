@@ -34,12 +34,13 @@ multi-turn LLM application and its serving backends and picks the model that ans
 it keeps the two states a multi-turn router needs, and any router plugged into it reads both.
 
 <p align="center">
-  <a href="docs/assets/overview.pdf"><img alt="MultiTurnServe at a glance: a multi-turn session and a config go in; MultiTurnServe keeps the session state (the dialogue state and each model's KV cache), the router (Chain-of-Route, 5 others, or yours) selects a model, a serving backend runs it, and the arena replays held-out recorded conversations; the reply and the cost of the turn come out" src="docs/assets/overview.png" width="86%"></a>
+  <a href="docs/assets/overview.pdf"><img alt="MultiTurnServe at a glance: a multi-turn session and a config go in; MultiTurnServe keeps the session state (the dialogue state and each model's serving state, its KV cache), the router (Chain-of-Route, 5 others, or yours) selects a model, a serving backend runs it, and the arena evaluates routers on recorded conversations and with a simulated user; the reply and the billed tokens of the turn come out" src="docs/assets/overview.png" width="86%"></a>
 </p>
 
 **MultiTurnServe at a glance.** At every turn, MultiTurnServe maintains the dialogue state and the part of the
 session each model has cached; the router, Chain-of-Route by default, estimates quality from the former and cost
-from the latter, and the arena evaluates new routers against Chain-of-Route on held-out recorded conversations.
+from the latter, and the arena evaluates new routers against Chain-of-Route on held-out recorded conversations
+and with a simulated user.
 
 Routing a multi-turn session differs from routing single queries in two ways:
 
@@ -54,8 +55,9 @@ MultiTurnServe keeps both states and gives them to the router at every turn:
   updated from the serving backend's usage after each turn.
 - **Routers**: Chain-of-Route and five baselines (single-turn, full-history, rag, knn, bao). A router implements
   `decide(turn, state)`, and your own router takes the same slot.
-- **Serving backends**: vLLM and OpenRouter, plus `echo` for tests. Both API backends report the cached tokens
-  that the cost accounting uses.
+- **Serving backends**: vLLM and OpenRouter, plus `echo` for tests. Both report the cached tokens that the cost
+  accounting uses when the server provides them: vLLM with `--enable-prompt-tokens-details`, OpenRouter depending
+  on the provider.
 - **Arena**: routers compared on the same sessions, by replaying recorded conversations from WildChat and
   LMSYS-Chat-1M answered by 9 models (static track) or by playing sessions live against a simulated user (dynamic
   track).
@@ -85,7 +87,8 @@ pip install -e ".[serve]"            # the package, the `multiturnserve` command
 pip install -e ".[encoder]"          # live embeddings for the built-in routers
 ```
 
-MultiTurnServe needs Python 3.10 or later. Serving and the tests run on CPU; the encoder is faster on a GPU. The
+MultiTurnServe needs Python 3.10 or later. Its core dependencies are numpy, PyYAML and PyTorch (torch), so the
+first install also installs torch. Serving and the tests run on CPU; the encoder is faster on a GPU. The
 built-in routers train on the MultiTurnServe data: set `MTS_DATA_DIR` to its folder. The data are not public yet
 ([ROADMAP](ROADMAP.md#6-data-and-checkpoints)); [toy data](docs/user-guide.md#toy-data) let you try training and
 the arena without them. The [user guide](docs/user-guide.md) has the data layout and the other options.
@@ -100,6 +103,9 @@ python -m demo.session                        # one session in this process, tur
 multiturnserve serve examples/config.yaml     # the gateway, on :8080
 python examples/app.py                        # in a second terminal: four turns through the gateway
 ```
+
+To run `examples/app.py` again, restart the gateway or use a new session id; the client refuses an id the gateway
+already has turns for.
 
 `examples/app.py` sends each turn to the gateway. `turns` holds the user's messages, one per turn:
 
@@ -123,9 +129,10 @@ It prints the turn, the model the router picked and the cost of the turn in USD:
 4 gemma-26b-a4b 1.60e-06
 ```
 
-The gateway also speaks the OpenAI API: `POST /v1/chat/completions` with a `chat_id` field or an `X-Chat-Id`
-header naming the session, so an existing OpenAI client works unchanged. The API keeps these OpenAI-style names
-(`chat_id`, `X-Chat-Id`, `/v1/chat/completions`) for compatibility; each one refers to a session.
+The gateway also speaks the OpenAI API: `POST /v1/chat/completions` with a `chat_id` field, an `X-Chat-Id`
+header or the OpenAI `user` field naming the session, so an existing OpenAI client works unchanged. The API keeps
+these OpenAI-style names (`chat_id`, `X-Chat-Id`, `user`, `/v1/chat/completions`) for compatibility; each one
+names a session.
 
 Without a gateway, a session runs in-process and each turn is three calls. `messages` is the session so far as an
 OpenAI-style list of `{"role", "content"}` dicts, ending with the user's new message:
@@ -133,7 +140,8 @@ OpenAI-style list of `{"role", "content"}` dicts, ending with the user's new mes
 ```python
 s = multiturnserve.open("session-1", config="examples/config.yaml")
 messages = [{"role": "user", "content": "Summarize this paper"}]
-d = s.route(messages)     # -> Decision(model, quality, cost, t): the pick, its predicted quality and USD cost
+d = s.route(messages)     # -> Decision(model, quality, cost, t): the pick, its predicted quality, and its
+                          #    estimated USD cost with a predicted output length
 o = s.run(d, messages)    # the picked model answers
 s.observe(o)              # both states updated
 ```
@@ -223,8 +231,11 @@ MultiTurnServe Arena compares routers on the same sessions, in two tracks.
 
 ```bash
 multiturnserve arena replay --router examples/my_router.py --dev     # static track, on a held-out part of train
-multiturnserve arena run --config pool.yaml --tasks test.jsonl --out runs/dyn/mine --user-url URL
+multiturnserve arena run --config pool.yaml --tasks my_tasks.jsonl --out runs/dyn/mine --user-url URL
 ```
+
+The dynamic track plays tasks from a file you provide, in the `chat.jsonl` format; the test conversations are not
+public yet.
 
 The static track needs the MultiTurnServe data in `$MTS_DATA_DIR`; [toy data](docs/user-guide.md#toy-data) run the
 same commands. [`arena/`](arena) has the track rules.
@@ -232,7 +243,7 @@ same commands. [`arena/`](arena) has the track rules.
 **Results.** On the static track (3,671 test turns, 9 models, one run with seed 0), CoR reaches the quality of the
 best single model, gemma-31b (0.7061), at 74% of gemma-31b's cost, interpolated on the upper envelope of its
 cost-quality curve; none of the five baselines reaches that quality. [LEADERBOARD.md](LEADERBOARD.md) has every
-router, and [Reproducing the paper's numbers](docs/user-guide.md#reproducing-the-papers-numbers) gives the
+router, and [Reproducing the leaderboard](docs/user-guide.md#reproducing-the-leaderboard) gives the
 commands.
 
 ## Documentation
@@ -256,7 +267,14 @@ comes next and the current limits, among them:
 - trained checkpoints and the arena data are not yet published, so a built-in router is trained with
   `multiturnserve train` before it serves;
 - dynamic-track results are self-reported;
+- the live encoder's model id is not yet checked against the script that made the precomputed embeddings
+  ([ROADMAP §2](ROADMAP.md#2-online-serving)), so a router served online may see slightly different inputs than
+  in training;
 - the package is installed from this repository, not from PyPI.
+
+The numbers in [LEADERBOARD.md](LEADERBOARD.md) come from the run of the original evaluation package that
+`arena replay` ports. The paper describes the static track (Section 5) but has no table or figure with these
+numbers: its main results (Section 4) use a different, five-model pool.
 
 ## Issues and contact
 

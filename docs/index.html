@@ -1295,6 +1295,10 @@ section.band, section.band.dark, #why, #results, #toolkit, .hero { background-co
 /* 3. the hero actions as a ticket: the install line, then a dashed tear-off row with the two actions */
 .ticket { width: min(640px, 100%); border: 2px solid var(--rule); background: var(--paper); box-shadow: 6px 6px 0 var(--rule); }
 .ticket .install { border: 0 !important; box-shadow: none; margin: 0; width: 100%; max-width: none; background: transparent; }
+.ticket .install code { white-space: normal; overflow: visible; }
+.ticket .install code::before { content: none; }
+.ticket .install code span { display: block; overflow-wrap: anywhere; }
+.ticket .install code span::before { content: "$ "; color: var(--faint); }
 /* a wider hero: the line under the name on one line, the description in two, the ticket as wide as the terminal */
 .hero .sub { max-width: none; }
 .hero .desc { max-width: 64ch; text-wrap: balance; }
@@ -1528,7 +1532,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 
 </head>
 <body>
-<div class="ticker" aria-hidden="true"><div class="track"><span>A session layer for multi-turn LLM routing</span><span>MultiTurnServe Arena: 3,996 conversations, 9 models</span><span>A session layer for multi-turn LLM routing</span><span>MultiTurnServe Arena: 3,996 conversations, 9 models</span><span>A session layer for multi-turn LLM routing</span><span>MultiTurnServe Arena: 3,996 conversations, 9 models</span><span>A session layer for multi-turn LLM routing</span><span>MultiTurnServe Arena: 3,996 conversations, 9 models</span></div></div>
+<div class="ticker" aria-hidden="true"><div class="track"><span>Chain-of-Route, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnServe Arena: 3,996 conversations, 9 models</span><span>Chain-of-Route, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnServe Arena: 3,996 conversations, 9 models</span></div></div>
 <nav class="nav" aria-label="Site">
   <div class="wrap">
     <a class="brand" href="#top">
@@ -1548,8 +1552,8 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
     <div class="sub">A session layer for multi-turn LLM routing</div>
     <p class="desc">A router picks which model answers each turn of a multi-turn session: a cheap one for an easy follow-up, a strong one for a hard question, without paying twice for the same session history. MultiTurnServe keeps track of what each session said and which model already read it, so any router can use both.</p>
     <div class="ticket">
-      <div class="install"><code>pip install "multiturnserve[serve] @ git+https://github.com/UCF-ML-Research/MultiTurnServe"</code></div>
-      <div class="tear"><a class="primary" href="#start">Get started</a><a href="#live">Try a live session</a></div>
+      <div class="install"><code><span>git clone https://github.com/UCF-ML-Research/MultiTurnServe</span><span>cd MultiTurnServe &amp;&amp; pip install -e ".[serve]"</span></code></div>
+      <div class="tear"><a class="primary" href="#start">Get started</a><a href="#live">Try an example session</a></div>
     </div>
     <div class="hfig" id="hfig" aria-label="Four turns of a session. Each turn adds to the history and to the KV cache of the model that answered. To route turn 3, the router reads both.">
       <svg class="hfd" viewBox="0 0 860 250" aria-hidden="true">
@@ -1557,11 +1561,11 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
         <g class="hf-turn b" style="--d:900"><rect x="224" y="10" width="196" height="76"/><text class="t" x="238" y="34">Turn 2</text><text class="q" x="238" y="62">Shorter, please</text></g>
         <g class="hf-turn b" style="--d:1700"><rect x="438" y="10" width="196" height="76"/><text class="t" x="452" y="34">Turn 3</text><text class="q" x="452" y="62">Compare to RouteLLM</text></g>
         <g class="hf-turn b" style="--d:5000"><rect x="652" y="10" width="196" height="76"/><text class="t" x="666" y="34">Turn 4</text><text class="q" x="666" y="62">Thanks!</text></g>
-        <g class="hf-chip b" style="--d:500"><rect x="24" y="96" width="140" height="26"/><text x="34" y="114">gemma-26b-a4b</text></g>
+        <g class="hf-chip b" style="--d:500"><rect x="24" y="96" width="110" height="26"/><text x="34" y="114">gemma-e4b</text></g>
         <g class="hf-chip b" style="--d:1300"><rect x="238" y="96" width="140" height="26"/><text x="248" y="114">gemma-26b-a4b</text></g>
         <g class="hf-chip q q3"><rect x="452" y="96" width="98" height="26"/><text x="486" y="114">?</text></g>
         <g class="hf-chip b" style="--d:4000"><rect x="452" y="96" width="140" height="26"/><text x="462" y="114">gemma-26b-a4b</text></g>
-        <g class="hf-chip b" style="--d:5400"><rect x="666" y="96" width="110" height="26"/><text x="676" y="114">gemma-e4b</text></g>
+        <g class="hf-chip b" style="--d:5400"><rect x="666" y="96" width="140" height="26"/><text x="676" y="114">gemma-26b-a4b</text></g>
         <text class="hf-lab" x="10" y="139">History: what was said</text><text class="hf-lab" x="10" y="195">KV cache: which model already read it</text>
         <rect class="hf-hist b" style="--d:300" x="96" y="146" width="110" height="18"/>
         <rect class="hf-hist b" style="--d:1100" x="210" y="146" width="210" height="18"/>
@@ -1577,11 +1581,11 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
         <g class="hf-turn b" style="--d:900"><rect x="2" y="88" width="356" height="70"/><text class="t" x="16" y="115">Turn 2</text><text class="q" x="92" y="115">Shorter, please</text></g>
         <g class="hf-turn b" style="--d:1700"><rect x="2" y="168" width="356" height="70"/><text class="t" x="16" y="195">Turn 3</text><text class="q" x="92" y="195">Compare to RouteLLM</text></g>
         <g class="hf-turn b" style="--d:5000"><rect x="2" y="248" width="356" height="70"/><text class="t" x="16" y="275">Turn 4</text><text class="q" x="92" y="275">Thanks!</text></g>
-        <g class="hf-chip b" style="--d:500"><rect x="16" y="46" width="176" height="24"/><text x="26" y="64">gemma-26b-a4b</text></g>
+        <g class="hf-chip b" style="--d:500"><rect x="16" y="46" width="124" height="24"/><text x="26" y="64">gemma-e4b</text></g>
         <g class="hf-chip b" style="--d:1300"><rect x="16" y="126" width="176" height="24"/><text x="26" y="144">gemma-26b-a4b</text></g>
         <g class="hf-chip b" style="--d:4000"><rect x="16" y="206" width="176" height="24"/><text x="26" y="224">gemma-26b-a4b</text></g>
         <g class="hf-chip q q3"><rect x="16" y="206" width="40" height="24"/><text x="30" y="224">?</text></g>
-        <g class="hf-chip b" style="--d:5400"><rect x="16" y="286" width="124" height="24"/><text x="26" y="304">gemma-e4b</text></g>
+        <g class="hf-chip b" style="--d:5400"><rect x="16" y="286" width="176" height="24"/><text x="26" y="304">gemma-26b-a4b</text></g>
         <text class="hf-lab" x="2" y="344">History: what was said</text><rect class="hf-hist b" style="--d:300" x="2" y="354" width="110" height="18"/><rect class="hf-hist b" style="--d:1100" x="116" y="354" width="160" height="18"/>
         <text class="hf-lab b" style="--d:2300" x="284" y="369" fill="var(--accent)">&rarr; quality</text>
         <text class="hf-lab" x="2" y="408">KV cache: which model already read it</text><rect class="hf-kv b" style="--d:600" x="2" y="418" width="110" height="18"/><rect class="hf-kv b" style="--d:1400" x="116" y="418" width="160" height="18"/>
@@ -1593,7 +1597,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 
 <section class="band" id="why">
   <div class="wrap">
-    <div class="head"><div><h2>Why <span class="hl">Session State</span></h2><p>In a session, the right model for a turn depends on the turns before it.</p></div></div>
+    <div class="head"><div><h2>Why Routing Needs <span class="hl">Session State</span></h2><p>In a session, the right model for a turn depends on the turns before it.</p></div></div>
     <div class="pro2">
       <div class="pp">
         <div class="ph"><b>Meaning</b><span>A turn often means what the turns before it say. A router that sees only the last turn misreads it.</span></div>
@@ -1601,14 +1605,14 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
         <div class="pnums">
           <div><b>58.7%</b><span>WildChat</span></div>
           <div><b>54.2%</b><span>LMSYS-Chat-1M</span></div>
-          <p class="pcap">of messages in these two public sets of real conversations get answers at least 3 points worse on a 10-point score when the earlier messages are removed.</p>
+          <p class="pcap">of messages in these two public sets of real conversations get a judge score at least 3 points lower when the earlier messages are removed (CoR paper, Section 4).</p>
         </div>
       </div>
       <div class="pp">
         <div class="ph"><b>Cost</b><span>A model that already read the session answers the next turn for less. Its KV cache, the model&rsquo;s memory of the session so far, holds the earlier turns; only the same model can reuse it.</span></div>
         <div class="whyex"><b>gemma-31b, price per 1M tokens</b><table><tr><td>Input</td><td>$0.20</td></tr><tr><td>Cached input</td><td>$0.04</td></tr></table><span class="note">Switching to a model that has not read the session pays for the whole history again.</span></div>
         <div class="pnums one">
-          <div><b>~95%</b><span>A cost estimate that ignores the cache overstates the cost by about 95% by the 6th turn (CoR paper, Section 4).</span></div>
+          <div><b>~95%</b><span>In the CoR paper (Section 4), a cost estimate that ignores the cache is off by about 95% (mean absolute percentage error) at turn 6.</span></div>
         </div>
       </div>
     </div>
@@ -1625,7 +1629,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
       </div>
       <div class="sl plug routers">
         <span class="sn">Routers</span>
-        <div class="sb pgs"><div class="pg"><em>Look at the whole session</em><a class="m ours" href="cor.html">Chain-of-Route (ours)</a><span class="m">Full history</span><span class="m">RAG history</span><span class="m">Bao et al.</span></div><div class="pg"><em>Look at one turn</em><span class="m">Single-turn</span><span class="m">kNN</span></div><span class="m add pgadd">+ your router</span><p class="pgcap">All plug in the same way and can be submitted to <a href="arena.html">MultiTurnServe Arena</a>.</p></div>
+        <div class="sb pgs"><div class="pg"><em>Look at the whole session</em><a class="m ours" href="cor.html">Chain-of-Route (ours)</a><span class="m">Full history</span><span class="m">RAG history</span><span class="m">Bao et al. (simplified)</span></div><div class="pg"><em>Look at one turn</em><span class="m">Single-turn</span><span class="m">kNN</span></div><span class="m add pgadd">+ your router</span><p class="pgcap">All plug in the same way and can be submitted to <a href="arena.html">MultiTurnServe Arena</a>.</p></div>
       </div>
       <div class="sl core">
         <span class="sn">MultiTurnServe</span>
@@ -1641,7 +1645,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 
 <section class="band" id="live">
   <div class="wrap">
-    <div class="head"><div><h2>Route a <span class="hl">Live Session</span></h2><p>Click <b>Next turn</b> to send the next message of a simulated session, and see which model the router picks, what it costs, and why.</p></div></div>
+    <div class="head"><div><h2>Step Through a <span class="hl">Session</span></h2><p>Click <b>Next turn</b> to send the next message of a simulated session, and see which model the router picks, what it costs, and why.</p></div></div>
     <div class="live" id="lv">
       <div class="lv-chat">
         <div class="lv-bar"><b>A research assistant, routed by Chain-of-Route</b></div>
@@ -1731,7 +1735,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
   const bill = (a, b) => `<div class="lv-bill"><div><span>This session</span><b>${money(a)}</b></div><div><span>All on gemma-31b, the best single model</span><b>${money(b)}</b></div></div>`;
   const panel = (t, cost, cached, fresh, saved) => {
     const why = t.why[0].toUpperCase() + t.why.slice(1);
-    const read = why + (saved > 0.00005 ? ` Saves ${money(saved)}.` : "");
+    const read = why + (saved > 0.00005 ? ` The cache saves ${money(saved)} on this turn.` : "");
     const mx = Math.max(...cache, 1);
     $("lvPanel").innerHTML =
       `<div class="lv-h">Turn ${turn} \u2192 ${POOL[t.pick][0]}</div><p class="lv-read">${esc(read)}</p>` +

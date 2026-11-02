@@ -56,8 +56,8 @@ class Exchange:
 
 @dataclass(frozen=True)
 class SessionState:
-    """The two states of a chat: the history (what was said, and by which model) and the KV cache (tokens each
-    model holds for this chat)."""
+    """The two states of a session: the history (what was said, and by which model) and the KV cache (tokens each
+    model holds for this session)."""
     history: tuple = ()
     kv_cache: CacheState = field(default_factory=CacheState)
 
@@ -79,7 +79,8 @@ class Costs:
 
 @dataclass(frozen=True)
 class Decision:
-    """The model a router picked for turn t, with the predicted quality and estimated USD cost of that model."""
+    """The model a router picked for turn t, with the predicted quality and estimated USD cost of that model
+    (the estimate uses a predicted output length)."""
     model: str
     quality: float | None = None
     cost: float | None = None
@@ -98,7 +99,7 @@ class Outcome:
 
 @dataclass(frozen=True)
 class Reply:
-    """One turn of a chat as the app sees it (turn counts from 1)."""
+    """One turn of a session as the app sees it (turn counts from 1)."""
     chat_id: str
     turn: int
     model: str

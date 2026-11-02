@@ -1,12 +1,14 @@
 """The app's side: multiturnserve.open(chat_id, gateway=":8080") -> a session that talks to a running gateway.
 
-  s = multiturnserve.open("chat-1", gateway=":8080")
+  s = multiturnserve.open("session-1", gateway=":8080")
   reply = s.chat("Summarize this paper")      # route, run, observe on the gateway
   print(reply.turn, reply.model, reply.cost)
 
 Without gateway=, open() builds a local session from a serve config (config="serve.yaml") instead.
 """
 from __future__ import annotations
+
+from urllib.parse import quote
 
 from .serving.http import post_json
 from .types import Decision, Reply, Usage
@@ -21,7 +23,7 @@ def gateway_url(gateway: str) -> str:
 
 
 class RemoteSession:
-    """A chat on a gateway. gateway: an address, or an HTTP client object with .post / .get (e.g. FastAPI's
+    """A session on a gateway. gateway: an address, or an HTTP client object with .post / .get (e.g. FastAPI's
     TestClient or an httpx.Client) whose base URL is the gateway."""
 
     def __init__(self, chat_id: str, gateway=":8080"):
@@ -38,7 +40,27 @@ class RemoteSession:
             raise RuntimeError(f"{path}: HTTP {r.status_code}: {r.text[:500]}")
         return r.json()
 
+    def _gateway_turns(self) -> int:
+        """How many turns the gateway already holds for this session id (0 when it has none)."""
+        if self.http is None:
+            import urllib.error
+            try:
+                return int(self.state()["turns"])
+            except urllib.error.HTTPError as e:
+                if e.code == 404:
+                    return 0
+                raise
+        r = self.http.get(f"{self.url}/v1/sessions/{quote(self.chat_id, safe='')}")
+        return 0 if r.status_code == 404 else int(r.json()["turns"])
+
     def chat(self, msg: str) -> Reply:
+        """Send one user message with the session so far; the gateway routes, runs and observes it."""
+        if not self.messages:
+            n = self._gateway_turns()
+            if n:
+                raise RuntimeError(f"the gateway already has {n} turn(s) for session {self.chat_id!r} and this client "
+                                   f"has none, so the two histories would differ: restart the gateway or use a new "
+                                   f"session id")
         self.messages.append({"role": "user", "content": msg})
         r = self._post("/v1/chat/completions", {"chat_id": self.chat_id, "messages": self.messages})
         text = r["choices"][0]["message"]["content"]
@@ -61,6 +83,6 @@ class RemoteSession:
         if self.http is None:
             import json
             import urllib.request
-            with urllib.request.urlopen(f"{self.url}/v1/sessions/{self.chat_id}") as r:
+            with urllib.request.urlopen(f"{self.url}/v1/sessions/{quote(self.chat_id, safe='')}") as r:
                 return json.loads(r.read().decode())
-        return self.http.get(f"{self.url}/v1/sessions/{self.chat_id}").json()
+        return self.http.get(f"{self.url}/v1/sessions/{quote(self.chat_id, safe='')}").json()

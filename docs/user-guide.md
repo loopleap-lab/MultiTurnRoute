@@ -12,7 +12,7 @@ the arena. [How MultiTurnServe works](architecture.md) explains the session stat
   - [Toy data](#toy-data)
 - [Running the arena](#running-the-arena)
 - [Track rules](#track-rules)
-- [Reproducing the paper's numbers](#reproducing-the-papers-numbers)
+- [Reproducing the leaderboard](#reproducing-the-leaderboard)
 
 ## Installation
 
@@ -132,7 +132,8 @@ python examples/app.py
   the last user message.
 - An existing OpenAI client works once it names the session, for example with the `user` field or an
   `X-Chat-Id` header.
-- The gateway keeps one session per `chat_id` in memory. A restart starts every session afresh.
+- The gateway keeps one session per `chat_id` in memory. A restart starts every session afresh. A new Python
+  client (`multiturnserve.open(..., gateway=...)`) refuses a `chat_id` the gateway already has turns for.
 - If the chosen model's backend fails, the gateway answers HTTP 502 and the session's state is unchanged.
 - `/v1/route` and `/v1/observe` are for apps that call the model themselves: ask for the model, call it, then
   report the reply and its usage. Without `cost`, `observe` prices the usage with the backend's prices.
@@ -249,11 +250,13 @@ without the real data. Its numbers mean nothing. From the repository root:
 ```bash
 python -c "from tests.synth import write_dataset; from multiturnserve.arena.data import MODELS; write_dataset('toy', n_conv=40, models=MODELS)"
 export MTS_DATA_DIR=toy
-multiturnserve train --router cor --out runs/cor                    # about 10 seconds on CPU
-multiturnserve arena replay --dev                                   # the six built-in routers
-multiturnserve arena replay --router examples/my_router.py --dev    # the example router
+multiturnserve train --router cor --out runs/cor                                  # about 10 seconds on CPU
+multiturnserve arena replay --name toy-builtins                                   # the six built-in routers
+multiturnserve arena replay --router examples/my_router.py --name toy-mine        # the example router
 ```
 
+The toy data include test labels, so `arena replay` runs on their test split without `--dev` (`--dev` works too).
+`--name` keeps the two runs apart: `runs/arena/toy-builtins/results.json` and `runs/arena/toy-mine/results.json`.
 `models=MODELS` gives every turn the static track's 9 models, so no `--models` is needed. The toy embeddings are
 16-dimensional; to serve a router trained on them, set `encoder: hash` in the config.
 
@@ -311,14 +314,15 @@ multiturnserve arena leaderboard RESULTS.json [--out LEADERBOARD.md] [--json sit
 - peak quality.
 
 The best single model is the reference line. A second table gives each router's best `quality - w * cost` on its
-curve for a few cost weights `w` (cost as a share of the best single model's cost, as on the website). `--json`
+curve for a few score weights `w` (cost as a share of the best single model's cost, as on the website). `w` is
+not the router's cost weight `lam`: `lam` sets each pick and traces the curve; `w` picks a point on it afterwards. `--json`
 writes the same rows, with the curves, for the website. `--note` adds a paragraph under the tables and `--source`
 names the source in the text.
 
 #### arena submit (static track)
 
 ```bash
-multiturnserve arena submit my_router.py [--files my_lab.py ...] [--out submission.tar.gz]
+multiturnserve arena submit my_router.py [--files my_lab.py ...] [--out submission.tar.gz] [--force]
 ```
 
 `submit` checks that the file registers one `Router` and packs it into a tarball for the organizers' replay,
@@ -326,7 +330,9 @@ with:
 - the other files it imports (`--files`);
 - a `meta.json` with the router name, the sha256 of every file and the package version.
 
-Nothing is uploaded.
+If the router file imports a module that sits next to it (a `.py` file or a package) and that module is not in
+`--files`, `submit` prints a warning. It does not replace an existing tarball unless you pass `--force`. Nothing
+is uploaded.
 
 #### arena release (organizers)
 
@@ -353,12 +359,14 @@ multiturnserve arena run --config POOL.yaml --tasks TASKS.jsonl --out LOG --user
 multiturnserve arena judge --log LOG --judge-url URL [--judge-model NVIDIA-Nemotron-3.5-Super]
                           [--judge-key-env MTS_JUDGE_API_KEY]
 multiturnserve arena score --log LOG [--reference OTHER_LOG]
-multiturnserve arena submit --log LOG [--out FILE.tar.gz]
+multiturnserve arena submit --log LOG [--out FILE.tar.gz] [--force]
 ```
 
 `run` plays each conversation live:
 - `POOL.yaml` is a serve config: your router, backends and models.
-- `TASKS.jsonl` is in the `chat.jsonl` format; only `conversation_id`, `turn` and `query` are read.
+- `TASKS.jsonl` is a file you provide, in the `chat.jsonl` format (the test conversations are not public yet);
+  only `conversation_id`, `turn` and `query` are read. Each conversation becomes a task: its goal is the first
+  user message, and the simulated user also sees the original user messages.
 - Every conversation is played once per cost weight and repeat. `--lams` defaults to the 5 values
   `k / (1 + k)` for k = 0.01, 0.1, 1, 10, 100.
 - Turn 1 is the original first message. Then the user simulator writes each user turn, or ends the
@@ -404,9 +412,11 @@ Dynamic track:
 - Cost is the real bill: the backend's reported tokens, cached tokens included, at the backend's prices.
 - Only runs with the same tasks, pool and simulator are comparable. Results are self-reported.
 
-## Reproducing the paper's numbers
+## Reproducing the leaderboard
 
-The repository has no separate script for the paper's tables. The [leaderboard](../LEADERBOARD.md) shows the
+The repository has no script for the paper's tables. The paper describes the static track (Section 5) but has no
+table or figure with its numbers; its main results (Section 4) use a different, five-model pool. The
+[leaderboard](../LEADERBOARD.md) shows the
 evaluation package's reported run of the six built-in routers (seed 0, default options). `arena replay` is a port
 of that package: the same data, seed and options give the same `results.json` fields. `tests/test_equivalence.py`
 checks this on synthetic data against the original `evaluate.py`, which is kept as a test fixture in

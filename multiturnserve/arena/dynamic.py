@@ -2,7 +2,7 @@
 the model answers, and the answer joins the history. Run, judge and score on your own machine with your own endpoints
 (any OpenAI-compatible API; keys come from environment variables); submit packs the logs.
 
-  run     task cards (chat.jsonl rows of the test conversations) -> <log>/log.jsonl, one line per answered turn
+  run     task cards (chat.jsonl rows of your tasks file)       -> <log>/log.jsonl, one line per answered turn
   judge   every answer, rated 1-9 in its own context            -> <log>/judged.jsonl (judge_quality = (score - 1) / 8)
   score   quality and bill per lambda, AUDC, peak (QNC against a reference run) -> <log>/score.json
   submit  meta, logs and score                                   -> <log>/submission.tar.gz
@@ -11,8 +11,10 @@ Conversations are compared per task, not per turn: after a few turns two routers
 """
 from __future__ import annotations
 
+import io
 import json
 import re
+import sys
 import tarfile
 from pathlib import Path
 
@@ -177,9 +179,36 @@ def score(log_dir: str, reference: str | None = None) -> dict:
     return res
 
 
-def submit_router(router_file: str, out: str | None = None, extra: list | None = None) -> Path:
+def local_imports(router_file) -> list:
+    """Modules the file imports that are .py files or packages next to it (a static check of its import lines)."""
+    import ast
+    f = Path(router_file)
+    names = []
+    for node in ast.walk(ast.parse(f.read_text(), str(f))):
+        if isinstance(node, ast.Import):
+            names += [a.name.split(".")[0] for a in node.names]
+        elif isinstance(node, ast.ImportFrom) and node.module and not node.level:
+            names.append(node.module.split(".")[0])
+    found = []
+    for n in dict.fromkeys(names):
+        for p in (f.parent / f"{n}.py", f.parent / n):
+            if p.exists() and p.resolve() != f.resolve() and p not in found:
+                found.append(p)
+                break
+    return found
+
+
+def _new_tarball(out: Path, force: bool) -> None:
+    if out.exists():
+        if not force:
+            raise SystemExit(f"{out} exists: pass --force to replace it, or --out another file")
+        print(f"replacing {out}", file=sys.stderr)
+
+
+def submit_router(router_file: str, out: str | None = None, extra: list | None = None, force: bool = False) -> Path:
     """Static track: check that the file registers one Router, and pack it (with extra files it imports) and a
-    meta.json (router name, sha256 of every file) into submission.tar.gz for the organizers to replay."""
+    meta.json (router name, sha256 of every file) into submission.tar.gz for the organizers to replay. Warns when the
+    file imports a module next to it that is not packed."""
     import hashlib
     from .. import __version__
     from ..registry import get_router
@@ -188,29 +217,36 @@ def submit_router(router_file: str, out: str | None = None, extra: list | None =
     if not issubclass(cls, Router) or cls.decide is Router.decide and cls.quality is None:
         raise SystemExit(f"{router_file}: the router must subclass Router and define decide()")
     files = [Path(router_file)] + [Path(f) for f in extra or []]
+    packed = {f.resolve() for f in files}
+    for m in local_imports(router_file):
+        if m.resolve() not in packed and not any(m.resolve() in f.parents for f in packed):
+            print(f"warning: {Path(router_file).name} imports {m.name}, which is next to it but not packed; "
+                  f"add it with --files {m}", file=sys.stderr)
     meta = {"track": "static", "router": cls.name, "files": {f.name: hashlib.sha256(f.read_bytes()).hexdigest()
                                                              for f in files}, "multiturnserve": __version__}
     out = Path(out or "submission.tar.gz")
+    _new_tarball(out, force)
     with tarfile.open(out, "w:gz") as tar:
         for f in files:
             tar.add(f, arcname=f"router/{f.name}")
         data = json.dumps(meta, indent=1).encode()
         info = tarfile.TarInfo("meta.json")
         info.size = len(data)
-        import io
         tar.addfile(info, io.BytesIO(data))
     return out
 
 
-def submit(log_dir: str, out: str | None = None) -> Path:
+def submit(log_dir: str, out: str | None = None, force: bool = False) -> Path:
     """Pack meta.json, log.jsonl, judged.jsonl, score.json (and the router file, when the run names one)."""
     d = Path(log_dir)
     meta = json.loads((d / "meta.json").read_text())
+    for name in ("meta.json", "log.jsonl", "judged.jsonl", "score.json"):
+        if not (d / name).exists():
+            raise SystemExit(f"{d / name} is missing: run arena run, judge and score first")
     out = Path(out or d / "submission.tar.gz")
+    _new_tarball(out, force)
     with tarfile.open(out, "w:gz") as tar:
         for name in ("meta.json", "log.jsonl", "judged.jsonl", "score.json"):
-            if not (d / name).exists():
-                raise SystemExit(f"{d / name} is missing: run arena run, judge and score first")
             tar.add(d / name, arcname=name)
         if meta.get("router_file") and Path(meta["router_file"]).exists():
             tar.add(meta["router_file"], arcname=f"router/{Path(meta['router_file']).name}")

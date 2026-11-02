@@ -1,4 +1,4 @@
-"""Sessions: one per chat. A session holds the chat's state (history and KV cache), asks the router for each turn,
+"""Sessions. A session holds its state (history and KV cache), asks the router for each turn,
 runs the chosen model on its serving backend, and updates the state from the usage the backend reports.
 
   route(messages) -> Decision(model, quality, cost, t) the router's pick for the next turn (no state change)
@@ -6,7 +6,7 @@ runs the chosen model on its serving backend, and updates the state from the usa
   observe(outcome) -> SessionState                     history and KV cache updated, one log line written
   chat(msg) -> Reply                                   all three, for a local session
 
-A Runtime is the shared part: the router, the backends, the encoder and the sessions by chat id (the gateway serves
+A Runtime is the shared part: the router, the backends, the encoder and the sessions by session id (the gateway serves
 one). Prompt lengths are estimated before a turn at 4 characters per token; the accounting uses the real usage.
 """
 from __future__ import annotations
@@ -37,7 +37,7 @@ def last_user(messages: list) -> str:
 
 
 class TurnLog:
-    """One JSONL line per answered turn: chat, turn, model, tokens, cost (no message texts)."""
+    """One JSONL line per answered turn: session id, turn, model, tokens, cost (no message texts)."""
 
     def __init__(self, folder):
         self.path = Path(folder) / "turns.jsonl"
@@ -54,10 +54,10 @@ class Session:
         self.chat_id, self.router, self.serving, self.encoder, self.log = chat_id, router, serving, encoder, log
         self.models = tuple(serving)              # model -> backend, in config order (ties go to the first)
         self.state = SessionState()
-        self.messages: list = []                  # the chat as chat() sends it
+        self.messages: list = []                  # the session as chat() sends it
         self.total = 0.0                          # USD so far
         self.lock = threading.Lock()
-        self._emb: dict = {}                      # turn_id -> {"q", "a", "h"} of this chat (with an encoder)
+        self._emb: dict = {}                      # turn_id -> {"q", "a", "h"} of this session (with an encoder)
         self._pending = None                      # (Turn, Decision) of the routed, not yet observed turn
 
     def _turn(self, messages: list) -> Turn:
@@ -140,7 +140,7 @@ CONFIG_KEYS = {"router", "serving", "models", "log", "lam", "checkpoint", "encod
 
 
 class Runtime:
-    """The router, the backends (model -> backend), the encoder, the log and the sessions by chat id."""
+    """The router, the backends (model -> backend), the encoder, the log and the sessions by session id."""
 
     def __init__(self, router, backends: list, encoder=None, log=None):
         self.router, self.encoder = router, encoder

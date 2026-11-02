@@ -7,7 +7,7 @@
               multiturnserve arena leaderboard results.json            -> LEADERBOARD.md
               multiturnserve arena release --data DIR --out DIR        public data: test turns without labels
               multiturnserve arena submit my_router.py                 pack a router for the organizers' replay
-  Dynamic     multiturnserve arena run --config serve.yaml --tasks test.jsonl --out runs/dyn/my-router
+  Dynamic     multiturnserve arena run --config serve.yaml --tasks tasks.jsonl --out runs/dyn/my-router
               multiturnserve arena judge --log runs/dyn/my-router
               multiturnserve arena score --log runs/dyn/my-router
               multiturnserve arena submit --log runs/dyn/my-router
@@ -140,7 +140,7 @@ def cmd_submit(a) -> None:
     from .arena.dynamic import submit, submit_router
     if bool(a.router) == bool(a.log):
         raise SystemExit("arena submit: give a router file (static track) or --log (dynamic track)")
-    print(f"-> {submit_router(a.router, a.out, a.files) if a.router else submit(a.log, a.out)}")
+    print(f"-> {submit_router(a.router, a.out, a.files, a.force) if a.router else submit(a.log, a.out, a.force)}")
 
 
 def parser() -> argparse.ArgumentParser:
@@ -177,8 +177,8 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("--folds", type=int, default=1, help="K > 1: K-fold over conversations instead of the test split")
     p.add_argument("--dev", action="store_true", help="replay on a fifth of the training conversations (no hidden labels)")
     p.add_argument("--bootstrap", type=int, default=0, help="paired bootstrap resamples over test conversations")
-    p.add_argument("--name", default="static")
-    p.add_argument("--out", default="runs/arena")
+    p.add_argument("--name", default="static", help="run name: results go to OUT/NAME/results.json (default: static)")
+    p.add_argument("--out", default="runs/arena", help="folder of the runs (default: runs/arena)")
     _training_args(p)
     p.set_defaults(func=cmd_replay)
 
@@ -198,7 +198,7 @@ def parser() -> argparse.ArgumentParser:
 
     p = asub.add_parser("run", help="dynamic track: play task cards with a simulated user through your router")
     p.add_argument("--config", required=True, help="serve config: router, serving backends and models (your pool)")
-    p.add_argument("--tasks", required=True, help="chat.jsonl rows of the conversations to play (test inputs)")
+    p.add_argument("--tasks", required=True, help="your tasks file: chat.jsonl rows of the conversations to play")
     p.add_argument("--out", required=True, help="log folder")
     p.add_argument("--router", help="override the config's router (name or .py file)")
     p.add_argument("--lams", nargs="*", type=float, help="cost weights (default: 5 values)")
@@ -227,6 +227,7 @@ def parser() -> argparse.ArgumentParser:
     p.add_argument("--files", nargs="*", default=[], help="static track: other files the router imports")
     p.add_argument("--log", help="dynamic track: the log folder of arena run / judge / score")
     p.add_argument("--out", help="default: submission.tar.gz (static), <log>/submission.tar.gz (dynamic)")
+    p.add_argument("--force", action="store_true", help="replace the tarball if it exists")
     p.set_defaults(func=cmd_submit)
     return ap
 

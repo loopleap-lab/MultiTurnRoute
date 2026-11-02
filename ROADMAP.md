@@ -4,8 +4,8 @@ MultiTurnServe routes every turn of a multi-turn session to one model of a pool,
 history and KV cache state for the router. Its arena compares routers by quality and cost in a static and a
 dynamic track.
 
-Done items are checked, with the release that delivered them. Planned items are unchecked. Each section lists
-what comes next first, then what comes later.
+Done items are checked, with the release that delivered them. Planned items are unchecked. In each section the
+done items come first, then the planned items under Next and Later.
 
 - [1. Sessions and serving](#1-sessions-and-serving)
 - [2. Online serving](#2-online-serving)

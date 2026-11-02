@@ -63,7 +63,9 @@ def test_serve_config_is_the_websites():
 
 def test_static_config_is_the_packaged_one():
     from multiturnserve.pricing import STATIC
-    assert yaml.safe_load((ROOT / "configs" / "arena" / "static.yaml").read_text()) == STATIC
+    copy, packaged = ROOT / "configs" / "arena" / "static.yaml", ROOT / "multiturnserve" / "arena" / "static.yaml"
+    assert copy.read_text() == packaged.read_text()                     # the copy is the packaged file, byte for byte
+    assert yaml.safe_load(copy.read_text()) == STATIC
     from multiturnserve.arena.replay import LAMBDAS
     lam = STATIC["lambdas"]
     assert len(LAMBDAS) == lam["n_kappa"] + 1 == 41 and len(STATIC["models"]) == 9
@@ -133,3 +135,24 @@ def test_static_submit_packs_the_router(tmp_path, capsys):
     assert meta["router"] == "my-router" and meta["track"] == "static" and len(meta["files"]["my_router.py"]) == 64
     code, _, err = cli("arena", "submit", capsys=capsys)
     assert code != 0 and "router file" in err
+
+
+def test_static_submit_warns_about_local_imports_and_keeps_an_existing_tarball(tmp_path, capsys):
+    import shutil
+    import tarfile
+    for f in ("my_router.py", "my_lab.py"):
+        shutil.copy(ROOT / "examples" / f, tmp_path / f)
+    out = tmp_path / "sub.tar.gz"
+    code, _, err = cli("arena", "submit", str(tmp_path / "my_router.py"), "--out", str(out), capsys=capsys)
+    assert code == 0, err
+    assert "warning: my_router.py imports my_lab.py" in err and "--files" in err
+    code, _, err = cli("arena", "submit", str(tmp_path / "my_router.py"), "--files", str(tmp_path / "my_lab.py"),
+                       "--out", str(out), capsys=capsys)
+    assert code != 0 and "--force" in err
+    with tarfile.open(out) as t:
+        assert "router/my_lab.py" not in t.getnames()                  # the first tarball is still there
+    code, _, err = cli("arena", "submit", str(tmp_path / "my_router.py"), "--files", str(tmp_path / "my_lab.py"),
+                       "--out", str(out), "--force", capsys=capsys)
+    assert code == 0 and "warning" not in err and "replacing" in err
+    with tarfile.open(out) as t:
+        assert "router/my_lab.py" in t.getnames()

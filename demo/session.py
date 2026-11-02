@@ -2,7 +2,7 @@
 
 The router, backends and cost weight are the ones in examples/config.yaml (examples/my_router.py on the echo
 backend and a stand-in backend, lam 0.2), so the numbers are those of the echo backend: it answers with the last
-message and caches the session's prefix like a real serving engine.
+message and caches the session's prefix like a real serving engine. Unlike the config, it writes no turn log.
 
     python -m demo.session
 """
@@ -20,6 +20,7 @@ TURNS = [
 
 cfg = yaml.safe_load(open("examples/config.yaml"))
 cfg["plugins"] = ["examples/" + p for p in cfg["plugins"]]
+cfg["log"] = None                       # no turn log: the demo writes no files
 s = multiturnserve.open("demo-session", config=cfg)
 print(f"{'turn':<5}{'model':<16}{'prompt':>7}{'cached':>8}{'cost (USD)':>13}  query")
 total = 0.0

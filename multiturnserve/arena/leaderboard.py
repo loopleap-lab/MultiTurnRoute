@@ -11,7 +11,10 @@ NAMES = {  # label in results.json -> (router, name on the leaderboard)
 }
 
 
-WEIGHTS = (0.0, 0.05, 0.1, 0.2, 0.5)   # cost weights of the score table (the website's slider)
+WEIGHTS = (0.0, 0.05, 0.1, 0.2, 0.5)   # score weights w of the score table (the website's slider)
+REL = ("The score weight w is not the router's cost weight lam. lam sets each pick, the model with the highest "
+       "(1 - lam) * quality - lam * cost / (the most expensive model's cost), and sweeping lam traces a router's "
+       "curve; w only chooses a point on that curve after the replay.")
 
 
 def best_score(curve: list, ref_cost: float, w: float) -> float:
@@ -47,7 +50,7 @@ def markdown(results: dict, source: str = "results.json", note: str = "") -> str
         "",
         f"Static track of MultiTurnServe Arena: {results['n_test_turns']:,} test turns, {len(results['models'])} models "
         f"(`configs/arena/static.yaml`). Every router is trained on the train split and replayed on the test split "
-        f"over 41 values of the cost weight. Source: {source}.",
+        f"over 41 values of its cost weight lam. Source: {source}.",
         "",
         "- **AUDC**: area under the cost-quality curve (cost normalized by the most expensive model). Higher is better.",
         f"- **QNC**: the lowest normalized cost at which a router reaches the quality of the best single model, "
@@ -65,9 +68,9 @@ def markdown(results: dict, source: str = "results.json", note: str = "") -> str
         lines.append(f"| {i} | {name} (`{r['router']}`) | {r['AUDC']:.4f} | {q} | {s} | {r['peak_quality']:.4f} |")
     lines += [f"| | {m} alone (reference) | | {ref['cost']:.4f} | 100% | {ref['quality']:.4f} |", ""]
     if all("scores" in r for r in rs):
-        lines += ["### Score at a cost weight", "",
-                  f"How much cost matters is a choice. For a weight w, each router is taken at its best point of the "
-                  f"curve for quality - w x cost, with cost as a share of what {m} alone costs.", "",
+        lines += ["### Score at a score weight w", "",
+                  f"How much cost matters is a choice. For a score weight w, each router is taken at its best point of "
+                  f"the curve for score = quality - w x cost, with cost as a share of what {m} alone costs. {REL}", "",
                   "| Router | " + " | ".join(f"w = {w:g}" for w in WEIGHTS) + " |",
                   "|---|" + "---|" * len(WEIGHTS)]
         for r in sorted(rs, key=lambda r: -r["scores"][str(WEIGHTS[1])]):
