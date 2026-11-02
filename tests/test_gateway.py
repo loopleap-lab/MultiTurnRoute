@@ -6,14 +6,14 @@ import pytest
 pytest.importorskip("fastapi")
 from fastapi.testclient import TestClient  # noqa: E402
 
-import multiturnserve as srx  # noqa: E402
+import multiturnserve as mts  # noqa: E402
 from fakes import PRICES, FakeOpenAI, Scripted  # noqa: E402,F401
 from multiturnserve.gateway import create_app  # noqa: E402
 from synth import MODELS, write_dataset  # noqa: E402
 
 
 def client(config, **kw):
-    return TestClient(create_app(srx.Runtime.from_config(config, **kw)))
+    return TestClient(create_app(mts.Runtime.from_config(config, **kw)))
 
 
 ECHO = {"router": "scripted-test", "serving": ["echo"], "models": {"echo": ["small", "big"]},
@@ -45,10 +45,10 @@ def test_chat_completions_keep_one_session_per_chat(tmp_path):
 
 def test_route_and_observe_over_http():
     c = client(ECHO)
-    s = srx.open("chat-1", gateway=c)
+    s = mts.open("chat-1", gateway=c)
     d = s.route([{"role": "user", "content": "hello"}])
     assert (d.model, d.t) == ("small", 0)
-    o = srx.Outcome(d.model, "hi there", srx.Usage(5, 0, 2), query="hello")
+    o = mts.Outcome(d.model, "hi there", mts.Usage(5, 0, 2), query="hello")
     st = s.observe(o)
     assert st["turns"] == 1 and st["kv_cache"] == {"small": 7}
     assert st["total_cost"] == pytest.approx((5 * 1.0 + 2 * 2.0) / 1e6)
@@ -56,7 +56,7 @@ def test_route_and_observe_over_http():
 
 def test_client_open_chat_against_the_gateway():
     c = client(ECHO)
-    s = srx.open("chat-1", gateway=c)
+    s = mts.open("chat-1", gateway=c)
     replies = [s.chat(m) for m in ["a b c", "d e", "f"]]
     assert [(r.turn, r.model) for r in replies] == [(1, "small"), (2, "small"), (3, "big")]
     assert replies[1].usage.cached_tokens == 8 and replies[2].text == "echo: f"
@@ -76,10 +76,10 @@ def test_trained_cor_routes_live_chats(cor_ckpt, tmp_path):
     """CoR from a checkpoint, live embeddings from a stand-in encoder, on a pool of two of its models."""
     cfg = {"router": "cor", "checkpoint": str(cor_ckpt), "serving": ["echo"], "models": {"echo": MODELS[1:3]},
            "encoder": "hash"}
-    rt = srx.Runtime.from_config(cfg)
+    rt = mts.Runtime.from_config(cfg)
     assert rt.router.emb_dim == 16 and rt.encoder.dim == 16
     c = TestClient(create_app(rt))
-    s = srx.open("chat-1", gateway=c)
+    s = mts.open("chat-1", gateway=c)
     for m in ["first question here", "a follow-up", "and one more"]:
         r = s.chat(m)
         assert r.model in MODELS[1:3]
@@ -91,10 +91,10 @@ def test_trained_cor_routes_live_chats(cor_ckpt, tmp_path):
 
 def test_untrained_router_says_how_to_train(tmp_path):
     with pytest.raises(FileNotFoundError, match="multiturnserve train --router cor"):
-        srx.Runtime.from_config({"router": "cor", "checkpoint": str(tmp_path / "none"), "serving": ["echo"],
+        mts.Runtime.from_config({"router": "cor", "checkpoint": str(tmp_path / "none"), "serving": ["echo"],
                                  "models": {"echo": ["gemma-31b"]}})
     with pytest.raises(ValueError, match="unknown config key"):
-        srx.Runtime.from_config({**ECHO, "routr": "x"})
+        mts.Runtime.from_config({**ECHO, "routr": "x"})
 
 
 def test_vllm_backend_reads_cached_tokens_and_key_from_env(monkeypatch):

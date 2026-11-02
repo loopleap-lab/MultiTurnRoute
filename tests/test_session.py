@@ -4,18 +4,18 @@ import json
 import numpy as np
 import pytest
 
-import multiturnserve as srx
+import multiturnserve as mts
 from fakes import PRICES, Scripted
 from multiturnserve.pricing import CacheState, static_cost, turn_cost
 from multiturnserve.serving.echo import Echo
 
 
 def runtime(tmp_path=None):
-    return srx.Runtime(Scripted(), [Echo(models=["small", "big"], prices=PRICES)], log=tmp_path)
+    return mts.Runtime(Scripted(), [Echo(models=["small", "big"], prices=PRICES)], log=tmp_path)
 
 
 def test_kv_cache_and_cost_by_hand(tmp_path):
-    s = srx.open("chat-1", runtime=runtime(tmp_path))
+    s = mts.open("chat-1", runtime=runtime(tmp_path))
     replies = [s.chat(m) for m in ["a b c", "d e", "f", "g h i j"]]
     # echo: prompt tokens = words of every message + one <user> per user message; reply = "echo: <last user msg>"
     # turn 1, small: prompt <user> a b c = 4, cached 0, output "echo: a b c" = 4
@@ -41,7 +41,7 @@ def test_kv_cache_and_cost_by_hand(tmp_path):
 
 def test_cache_cost_estimate_reads_the_kv_cache():
     """Before turn 3 the router's estimate charges small's held prefix at the cached price, big's at full price."""
-    s = srx.open("chat-2", runtime=runtime())
+    s = mts.open("chat-2", runtime=runtime())
     s.chat("a b c"), s.chat("d e")
     s.messages.append({"role": "user", "content": "f"})
     turn = s._turn(s.messages)
@@ -64,17 +64,17 @@ def test_cache_state_is_immutable_and_capped_by_the_prompt():
 
 
 def test_session_state_after_and_usage_formats():
-    st = srx.SessionState().after("q", "a", "m", 10, 5).after("q2", "a2", "n", 20, 3)
+    st = mts.SessionState().after("q", "a", "m", 10, 5).after("q2", "a2", "n", 20, 3)
     assert st.kv_cache.held == {"m": 15, "n": 23} and [x.model for x in st.history] == ["m", "n"]
-    assert srx.Usage.of({"prompt_tokens": 9, "completion_tokens": 2, "prompt_tokens_details": {"cached_tokens": 4}}) \
-        == srx.Usage(9, 4, 2)
-    assert srx.Usage.of({"prompt_tokens": 9, "cached_tokens": 4, "output_tokens": 2}) == srx.Usage(9, 4, 2)
-    assert srx.Usage.of((9, 4, 2)) == srx.Usage(9, 4, 2)
+    assert mts.Usage.of({"prompt_tokens": 9, "completion_tokens": 2, "prompt_tokens_details": {"cached_tokens": 4}}) \
+        == mts.Usage(9, 4, 2)
+    assert mts.Usage.of({"prompt_tokens": 9, "cached_tokens": 4, "output_tokens": 2}) == mts.Usage(9, 4, 2)
+    assert mts.Usage.of((9, 4, 2)) == mts.Usage(9, 4, 2)
 
 
 def test_pick_ties_go_to_the_first_model_and_lam_trades_cost():
     from multiturnserve.types import Costs
-    r = srx.Router()
+    r = mts.Router()
     c = Costs([1.0, 3.0], 3.0, ("a", "b"), [1.0, 3.0])
     r.lam = 0.0
     assert r.pick(np.array([0.5, 0.5]), c) == "a"

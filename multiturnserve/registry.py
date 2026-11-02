@@ -49,7 +49,7 @@ def load_plugin(path: str):
         raise FileNotFoundError(f"plugin file {path} not found")
     digest = hashlib.sha256(open(path, "rb").read()).hexdigest()[:12]
     stem = "".join(ch if ch.isalnum() else "_" for ch in os.path.splitext(os.path.basename(path))[0])
-    mod_name = f"srx_plugin_{stem}_{digest}"
+    mod_name = f"mts_plugin_{stem}_{digest}"
     if mod_name in sys.modules:
         return sys.modules[mod_name]
     folder = os.path.dirname(os.path.abspath(path))

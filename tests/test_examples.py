@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-import multiturnserve as srx
+import multiturnserve as mts
 from synth import write_dataset
 
 EX = Path(__file__).resolve().parents[1] / "examples"
@@ -25,7 +25,7 @@ def free_port() -> int:
 def gateway(tmp_path):
     uvicorn = pytest.importorskip("uvicorn")
     from multiturnserve.gateway import create_app
-    rt = srx.Runtime.from_config(str(EX / "config.yaml"), log=str(tmp_path / "logs"))
+    rt = mts.Runtime.from_config(str(EX / "config.yaml"), log=str(tmp_path / "logs"))
     port = free_port()
     server = uvicorn.Server(uvicorn.Config(create_app(rt), host="127.0.0.1", port=port, log_level="warning"))
     th = threading.Thread(target=server.run, daemon=True)
@@ -58,8 +58,8 @@ def test_my_router_and_my_backend_register():
     B = get_serving(str(EX / "my_backend.py"))
     assert R.name == "my-router" and B.name == "my-backend" and B.models == ["gemma-26b-a4b", "gemma-31b"]
     text, usage = B().run("gemma-31b", [{"role": "user", "content": "hello"}])
-    assert text == "echo: hello" and srx.Usage.of(usage).prompt_tokens == 2
-    assert B().prices("gemma-31b") == srx.pricing.PRICES["gemma-31b"]
+    assert text == "echo: hello" and mts.Usage.of(usage).prompt_tokens == 2
+    assert B().prices("gemma-31b") == mts.pricing.PRICES["gemma-31b"]
 
 
 def test_my_router_in_the_static_track(tmp_path):
