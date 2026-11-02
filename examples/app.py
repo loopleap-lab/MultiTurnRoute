@@ -1,9 +1,9 @@
 # app.py
 import multiturnserve
 
-chat = ["Summarize this paper", "Shorter, please", "Compare to RouteLLM", "Thanks!"]
+turns = ["Summarize this paper", "Shorter, please", "Compare to RouteLLM", "Thanks!"]   # the user's messages
 
-s = multiturnserve.open("chat-1", gateway=":8080")
-for msg in chat:
+s = multiturnserve.open("session-1", gateway=":8080")
+for msg in turns:
     reply = s.chat(msg)       # route, run, observe
-    print(reply.turn, reply.model, reply.cost)
+    print(reply.turn, reply.model, f"{reply.cost:.2e}")

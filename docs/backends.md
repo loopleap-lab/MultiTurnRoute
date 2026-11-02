@@ -74,7 +74,9 @@ the server does not report them:
   reported depends on the provider.
 
 `echo` counts whitespace-separated words as tokens. A model's cache holds every prompt it read followed by its
-reply, so the cached part of a new prompt is the longest prefix it shares with one of them.
+reply, so the cached part of a new prompt is the longest prefix it shares with one of them. The cache belongs to
+the backend, not to a session: every session of a gateway (one `Runtime`) shares it, so two sessions that start
+with the same message get cached tokens on the second one, as on a serving engine with prefix caching.
 
 ## Prices
 
@@ -100,11 +102,11 @@ names the config entry to add. The static track's table:
 
 ### Any client
 
-A backend is one file. This one is `examples/my_backend.py`:
+A backend is a class in a `.py` file. This one is `examples/my_backend.py`:
 
 ```python
 from multiturnserve import register_serving, Serving
-from my_lab import my_client, PRICES    # your code
+from my_lab import my_client, PRICES    # your code; examples/my_lab.py stands in for it
 
 @register_serving
 class MyBackend(Serving):
@@ -126,8 +128,9 @@ class MyBackend(Serving):
 - The config's `models:` entry for the backend replaces the class's `models`, and its `backends:` entry becomes
   constructor arguments. The base class takes `models` and `prices`; add your own options to `__init__`.
 
-Put the file in `backends/` next to the config, or list it under `plugins:`, and name the backend under
-`serving:`. `examples/config.yaml` does this:
+Put the file in a `backends/` folder in the config's folder, or list it under `plugins:` (paths relative to the
+config), and name the backend under `serving:`. A file next to the config but not listed under `plugins:` is not
+loaded. `examples/config.yaml` does this:
 
 ```yaml
 router: my-router
@@ -135,6 +138,7 @@ serving: [echo, my-backend]
 models:
   echo: [gemma-e4b]
   my-backend: [gemma-26b-a4b, gemma-31b]
+lam: 0.2                  # cost weight: 0.2 weighs quality over cost, so the router moves to a larger model
 plugins: [my_router.py, my_backend.py]
 log: logs/
 ```

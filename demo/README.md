@@ -6,8 +6,9 @@ One multi-turn session through MultiTurnServe, turn by turn. It needs no GPU and
 python -m demo.session        # from the repository root
 ```
 
-The session runs the router and backends of [`examples/config.yaml`](../examples/config.yaml): the example
-router ([`examples/my_router.py`](../examples/my_router.py)) on the `echo` backend and a stand-in backend. The
+The session runs the router, backends and cost weight of [`examples/config.yaml`](../examples/config.yaml): the
+example router ([`examples/my_router.py`](../examples/my_router.py)) on the `echo` backend and a stand-in backend,
+with `lam: 0.2`. A cost weight of 0.2 weighs quality over cost, so the router moves to a larger model. The
 echo backend answers with the last message and caches the session's prefix like a serving engine, so the token
 counts and costs are real accounting on toy answers.
 

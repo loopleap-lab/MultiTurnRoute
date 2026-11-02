@@ -1,9 +1,11 @@
-# The website's example, runnable anywhere: your router, the echo backend and your backend (my_lab.py stands in
-# for your code). multiturnserve serve examples/config.yaml, then python examples/app.py
+# A serve config that runs with no GPU and no API keys: the example router (my_router.py) on the echo backend and
+# an example backend (my_backend.py); my_lab.py stands in for your own code. It is the config the website shows.
+#   multiturnserve serve examples/config.yaml, then python examples/app.py
 router: my-router
 serving: [echo, my-backend]
 models:
   echo: [gemma-e4b]
   my-backend: [gemma-26b-a4b, gemma-31b]
+lam: 0.2                  # cost weight: 0.2 weighs quality over cost, so the router moves to a larger model
 plugins: [my_router.py, my_backend.py]
 log: logs/

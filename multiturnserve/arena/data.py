@@ -81,9 +81,14 @@ def load(name: str = "chat", models: list | None = None, batch: str | None = Non
     models = models or MODELS
     extra = hidden_labels(hidden)
     by_conv: dict = {}
-    with open(data_dir(data) / f"{name}.jsonl") as f:
+    path, seen = data_dir(data) / f"{name}.jsonl", set()
+    if not path.exists():
+        raise FileNotFoundError(f"no {path}: set MTS_DATA_DIR (or --data) to the MultiTurnServe data folder. "
+                                f"The data are not public yet (see ROADMAP.md)")
+    with open(path) as f:
         for line in f:
             r = json.loads(line)
+            seen.update(r.get("responses") or {})
             if batch and r.get("batch") != batch:
                 continue
             labels = r.get("labels") or extra.get(r["turn_id"]) or {}
@@ -102,4 +107,7 @@ def load(name: str = "chat", models: list | None = None, batch: str | None = Non
         keep = [x for i, x in enumerate(turns) if x.t == i + 1]
         if keep:
             convs.append(Conversation(cid, source, split, fold, tuple(keep)))
+    if not convs:
+        raise ValueError(f"no turn of {path} has labels for every model of the pool ({' '.join(models)}); "
+                         f"choose the models of the data with --models (the data have: {' '.join(sorted(seen))})")
     return convs, models

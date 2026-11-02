@@ -49,7 +49,8 @@ not on PyPI yet. See [Installation](user-guide.md#installation).
 The routers train on the MultiTurnServe data (`chat.jsonl`, the turn embeddings and `prices.json`); set
 `MTS_DATA_DIR` to its folder. The data have no public download location yet, and no trained checkpoints are
 published ([roadmap](../ROADMAP.md#6-data-and-checkpoints)). [The data](user-guide.md#the-data) describes the
-format.
+format, and [Toy data](user-guide.md#toy-data) shows how to write a synthetic data folder to try `train` and
+`arena replay`.
 
 ## Serving
 

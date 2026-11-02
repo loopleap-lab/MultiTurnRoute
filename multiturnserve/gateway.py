@@ -16,8 +16,14 @@ import uuid
 from .types import Outcome, Usage
 
 
+SERVE_EXTRA = 'the gateway needs the [serve] extra: pip install -e ".[serve]"'
+
+
 def create_app(runtime):
-    from fastapi import Body, FastAPI, Header, HTTPException
+    try:
+        from fastapi import Body, FastAPI, Header, HTTPException
+    except ImportError:
+        raise ImportError(SERVE_EXTRA) from None
 
     app = FastAPI(title="MultiTurnServe gateway")
 
@@ -92,5 +98,8 @@ def create_app(runtime):
 
 
 def serve(runtime, host: str = "127.0.0.1", port: int = 8080) -> None:
-    import uvicorn
+    try:
+        import uvicorn
+    except ImportError:
+        raise ImportError(SERVE_EXTRA) from None
     uvicorn.run(create_app(runtime), host=host, port=port, log_level="info")

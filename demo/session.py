@@ -1,8 +1,8 @@
 """One multi-turn session through MultiTurnServe, turn by turn, with no GPU and no API keys.
 
-The router and backends are the ones in examples/config.yaml (examples/my_router.py on the echo backend and a
-stand-in backend), so the numbers are those of the echo backend: it answers with the last message and caches
-the session's prefix like a real serving engine.
+The router, backends and cost weight are the ones in examples/config.yaml (examples/my_router.py on the echo
+backend and a stand-in backend, lam 0.2), so the numbers are those of the echo backend: it answers with the last
+message and caches the session's prefix like a real serving engine.
 
     python -m demo.session
 """
@@ -20,7 +20,6 @@ TURNS = [
 
 cfg = yaml.safe_load(open("examples/config.yaml"))
 cfg["plugins"] = ["examples/" + p for p in cfg["plugins"]]
-cfg["lam"] = 0.2                        # weigh quality more than cost, so the router moves to a larger model
 s = multiturnserve.open("demo-session", config=cfg)
 print(f"{'turn':<5}{'model':<16}{'prompt':>7}{'cached':>8}{'cost (USD)':>13}  query")
 total = 0.0

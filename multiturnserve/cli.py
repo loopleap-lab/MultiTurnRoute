@@ -235,7 +235,7 @@ def main(argv: list | None = None) -> None:
     a = parser().parse_args(argv)
     try:
         a.func(a)
-    except (FileNotFoundError, KeyError, ValueError) as e:
+    except (FileNotFoundError, ImportError, KeyError, ValueError) as e:
         if "--debug" in (argv or sys.argv):
             raise
         sys.exit(f"multiturnserve: {e}")

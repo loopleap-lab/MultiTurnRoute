@@ -20,7 +20,10 @@ class Encoder:
 
     def __init__(self, model: str = GRANITE, layer: int = 30, device: str | None = None, max_chars: int = 2000):
         import torch
-        from transformers import AutoModel, AutoTokenizer
+        try:
+            from transformers import AutoModel, AutoTokenizer
+        except ImportError:
+            raise ImportError('live embeddings need the [encoder] extra: pip install -e ".[encoder]"') from None
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.tok = AutoTokenizer.from_pretrained(model)
         self.model = AutoModel.from_pretrained(model, torch_dtype=torch.float32).to(self.device).eval()

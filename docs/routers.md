@@ -13,7 +13,7 @@ trains on the data.
 
 | Router | Quality from | Cost in the decision |
 |---|---|---|
-| `cor` | Dialogue State Predictor: local attention over past turns, a GRU state and a gate | each model's cached prefix at the cached price (`CacheCost`) |
+| `cor` | Dialogue State Propagator (DSP): local attention over past turns, a GRU state and a gate | each model's cached prefix at the cached price (`CacheCost`) |
 | `single-turn` | MLP on the current query | every prompt token at the full input price (`StaticCost`) |
 | `full-history` | MLP on one embedding of the history and the query | full input price (`StaticCost`) |
 | `rag` | MLP on the query and the mean of the 2 past turns most similar to it | full input price (`StaticCost`) |
@@ -23,7 +23,7 @@ trains on the data.
 - All six train on the data and read turn embeddings. Train one with `multiturnserve train` before serving it
   (see the [user guide](user-guide.md#training-the-built-in-routers)); serve it with an encoder
   (`encoder: granite`, the default).
-- `cor` is Chain-of-Route. Its Dialogue State Predictor is in `multiturnserve/routers/cor/dsp.py`; `--dsp 2`
+- `cor` is Chain-of-Route. Its Dialogue State Propagator (DSP) is in `multiturnserve/routers/cor/dsp.py`; `--dsp 2`
   selects a variant that projects every input and also reads the history embedding.
 - `single-turn`, `full-history` and `rag` share one MLP router (`multiturnserve/routers/mlp.py`) and differ in
   the features they read.
@@ -96,12 +96,12 @@ gives the formula.
 
 ### 1. Write the router
 
-A router is one file. This one is `examples/my_router.py`:
+A router is a class in a `.py` file. This one is `examples/my_router.py`:
 
 ```python
 from multiturnserve import register_router, Router
 from multiturnserve.parts import CacheCost
-from my_lab import MyQuality      # your code
+from my_lab import MyQuality      # your code; examples/my_lab.py stands in for it
 
 @register_router
 class MyRouter(Router):
@@ -118,14 +118,17 @@ class MyRouter(Router):
 ```
 
 `MyQuality` is your quality estimate: called with `(turn, history)`, it returns one number per model of
-`turn.models`, in that order. `examples/my_lab.py` gives a toy one, so the example runs anywhere. `decide` may
+`turn.models`, in that order. `my_lab` is not a package: `examples/my_lab.py` is a stand-in with a toy
+`MyQuality`, so the example runs anywhere. A plugin file can import modules from its own folder. `decide` may
 also return a model name by any rule of its own; it must be a model of the pool.
 
 The name uses dashes and may not be the name of a built-in router.
 
 ### 2. Serve it
 
-Put the file in `routers/` next to the config and name it in the config, or list it under `plugins:`:
+MultiTurnServe loads a router file in one of two ways: from a `routers/` folder in the config's folder, or from
+the config's `plugins:` list (paths relative to the config). A file next to the config but not listed under
+`plugins:` is not loaded. Then name the router in the config:
 
 ```yaml
 router: my-router
@@ -190,8 +193,8 @@ class MeanQuality(Router):
 ```
 
 ```bash
-multiturnserve train --router routers/mean_quality.py --out runs/mean-quality
-multiturnserve serve config.yaml                       # with router: mean-quality
+multiturnserve train --router routers/mean_quality.py --out runs/mean-quality    # with the file in routers/
+multiturnserve serve config.yaml                       # with router: mean-quality, config.yaml next to routers/
 ```
 
 `state()` returns tensors and plain values; the checkpoint is read with `torch.load(..., weights_only=True)`.
@@ -215,7 +218,7 @@ Each conversation has `conv_id` and `turns`. Each turn has `turn_id`, `t`, `quer
 ### 5. Submit it
 
 ```bash
-multiturnserve arena submit routers/my_router.py --files routers/my_lab.py
+multiturnserve arena submit examples/my_router.py --files examples/my_lab.py
 ```
 
 This packs the router, the files it imports and a `meta.json` into `submission.tar.gz` for the organizers'

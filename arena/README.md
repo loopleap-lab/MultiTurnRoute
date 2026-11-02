@@ -7,11 +7,13 @@ Compares LLM routers on real multi-turn conversations, by answer quality and cos
 
 - **Static track**: a fixed pool of 9 models and recorded conversations. Every model has answered every turn on
   the conversation's real history and each answer is scored, so a router's picks are looked up and scored turn
-  by turn on hidden test conversations. The training split is released in full.
+  by turn on hidden test conversations. The training split has every field; the data are not public yet
+  ([ROADMAP](../ROADMAP.md#6-data-and-checkpoints)), and [toy data](../docs/user-guide.md#toy-data) run the same
+  commands.
 
   ```bash
-  multiturnserve arena replay --router routers/my_router.py --dev   # on a held-out part of the training split
-  multiturnserve arena submit routers/my_router.py                  # pack the router file for the organizers
+  multiturnserve arena replay --router examples/my_router.py --dev                      # on a held-out part of the training split
+  multiturnserve arena submit examples/my_router.py --files examples/my_lab.py           # pack the router files for the organizers
   ```
 
 - **Dynamic track**: the session runs live. A fixed simulated user reads each reply and writes the next message,

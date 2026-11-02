@@ -1528,7 +1528,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 
 </head>
 <body>
-<div class="ticker" aria-hidden="true"><div class="track"><span>A session layer for multi-turn LLM routing</span><span>MultiTurnServe Arena: 3,996 real chats, 9 models</span><span>A session layer for multi-turn LLM routing</span><span>MultiTurnServe Arena: 3,996 real chats, 9 models</span><span>A session layer for multi-turn LLM routing</span><span>MultiTurnServe Arena: 3,996 real chats, 9 models</span><span>A session layer for multi-turn LLM routing</span><span>MultiTurnServe Arena: 3,996 real chats, 9 models</span></div></div>
+<div class="ticker" aria-hidden="true"><div class="track"><span>A session layer for multi-turn LLM routing</span><span>MultiTurnServe Arena: 3,996 conversations, 9 models</span><span>A session layer for multi-turn LLM routing</span><span>MultiTurnServe Arena: 3,996 conversations, 9 models</span><span>A session layer for multi-turn LLM routing</span><span>MultiTurnServe Arena: 3,996 conversations, 9 models</span><span>A session layer for multi-turn LLM routing</span><span>MultiTurnServe Arena: 3,996 conversations, 9 models</span></div></div>
 <nav class="nav" aria-label="Site">
   <div class="wrap">
     <a class="brand" href="#top">
@@ -1548,8 +1548,8 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
     <div class="sub">A session layer for multi-turn LLM routing</div>
     <p class="desc">A router picks which model answers each turn of a multi-turn session: a cheap one for an easy follow-up, a strong one for a hard question, without paying twice for the same session history. MultiTurnServe keeps track of what each session said and which model already read it, so any router can use both.</p>
     <div class="ticket">
-      <div class="install"><code>pip install git+https://github.com/UCF-ML-Research/MultiTurnServe</code></div>
-      <div class="tear"><a class="primary" href="#start">Get started</a><a href="#live">Try a live chat</a></div>
+      <div class="install"><code>pip install "multiturnserve[serve] @ git+https://github.com/UCF-ML-Research/MultiTurnServe"</code></div>
+      <div class="tear"><a class="primary" href="#start">Get started</a><a href="#live">Try a live session</a></div>
     </div>
     <div class="hfig" id="hfig" aria-label="Four turns of a session. Each turn adds to the history and to the KV cache of the model that answered. To route turn 3, the router reads both.">
       <svg class="hfd" viewBox="0 0 860 250" aria-hidden="true">
@@ -1593,7 +1593,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 
 <section class="band" id="why">
   <div class="wrap">
-    <div class="head"><div><h2>Multi-Turn Apps Need <span class="hl">Session State</span></h2><p>In a session, the right model for a turn depends on the turns before it.</p></div></div>
+    <div class="head"><div><h2>Why <span class="hl">Session State</span></h2><p>In a session, the right model for a turn depends on the turns before it.</p></div></div>
     <div class="pro2">
       <div class="pp">
         <div class="ph"><b>Meaning</b><span>A turn often means what the turns before it say. A router that sees only the last turn misreads it.</span></div>
@@ -1601,14 +1601,14 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
         <div class="pnums">
           <div><b>58.7%</b><span>WildChat</span></div>
           <div><b>54.2%</b><span>LMSYS-Chat-1M</span></div>
-          <p class="pcap">of messages in these two public sets of real chats get answers at least 3 points worse on a 10-point score when the earlier messages are removed.</p>
+          <p class="pcap">of messages in these two public sets of real conversations get answers at least 3 points worse on a 10-point score when the earlier messages are removed.</p>
         </div>
       </div>
       <div class="pp">
         <div class="ph"><b>Cost</b><span>A model that already read the session answers the next turn for less. Its KV cache, the model&rsquo;s memory of the session so far, holds the earlier turns; only the same model can reuse it.</span></div>
-        <div class="whyex"><b>Claude Sonnet, price per 1M tokens</b><table><tr><td>Input</td><td>$3.00</td></tr><tr><td>Cached input</td><td>$0.30</td></tr></table><span class="note">Switching to a model that has not read the session pays for the whole history again.</span></div>
+        <div class="whyex"><b>gemma-31b, price per 1M tokens</b><table><tr><td>Input</td><td>$0.20</td></tr><tr><td>Cached input</td><td>$0.04</td></tr></table><span class="note">Switching to a model that has not read the session pays for the whole history again.</span></div>
         <div class="pnums one">
-          <div><b>~95%</b><span>A cost estimate that ignores the cache overstates the cost by about 95% by the 6th turn.</span></div>
+          <div><b>~95%</b><span>A cost estimate that ignores the cache overstates the cost by about 95% by the 6th turn (CoR paper, Section 4).</span></div>
         </div>
       </div>
     </div>
@@ -1625,7 +1625,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
       </div>
       <div class="sl plug routers">
         <span class="sn">Routers</span>
-        <div class="sb pgs"><div class="pg"><em>Look at the whole session</em><a class="m ours" href="cor.html">Chain-of-Route (ours)</a><span class="m">MTRouter</span><span class="m wide2">DialRouter</span></div><div class="pg"><em>Look at one turn</em><span class="m">RouteLLM</span><span class="m">CARROT</span></div><span class="m add pgadd">+ your router</span><p class="pgcap">All plug in the same way and can be submitted to <a href="arena.html">MultiTurnServe Arena</a>.</p></div>
+        <div class="sb pgs"><div class="pg"><em>Look at the whole session</em><a class="m ours" href="cor.html">Chain-of-Route (ours)</a><span class="m">Full history</span><span class="m">RAG history</span><span class="m">Bao et al.</span></div><div class="pg"><em>Look at one turn</em><span class="m">Single-turn</span><span class="m">kNN</span></div><span class="m add pgadd">+ your router</span><p class="pgcap">All plug in the same way and can be submitted to <a href="arena.html">MultiTurnServe Arena</a>.</p></div>
       </div>
       <div class="sl core">
         <span class="sn">MultiTurnServe</span>
@@ -1641,7 +1641,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 
 <section class="band" id="live">
   <div class="wrap">
-    <div class="head"><div><h2>Route a <span class="hl">Live Chat</span></h2><p>Click <b>Next turn</b> to send the next message of a simulated chat, and see which model the router picks, what it costs, and why.</p></div></div>
+    <div class="head"><div><h2>Route a <span class="hl">Live Session</span></h2><p>Click <b>Next turn</b> to send the next message of a simulated session, and see which model the router picks, what it costs, and why.</p></div></div>
     <div class="live" id="lv">
       <div class="lv-chat">
         <div class="lv-bar"><b>A research assistant, routed by Chain-of-Route</b></div>
@@ -1655,14 +1655,14 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 
 <section class="band" id="start">
   <div class="wrap">
-    <div class="head"><div><h2>Get <span class="hl">Started</span></h2><p>As the operator of a multi-turn LLM app: install, choose a router, and route every turn.</p></div></div>
+    <div class="head"><div><h2>Get <span class="hl">Started</span></h2><p>Install, start the gateway with the example config, and send a session&rsquo;s turns through it. No GPU, data or API keys needed.</p></div></div>
     <div class="runv" id="workflow" hidden>
       <div class="runv-grid">
         <div class="runv-term"><div class="runv-bar"><i></i><i></i><i></i><span class="runv-title">your terminal</span><button class="runv-replay" type="button">Replay</button></div><div class="runv-body" aria-live="polite"></div></div>
         <div class="runv-panel"><div class="runv-head"><b class="runv-step"></b><span class="runv-cap"></span></div><div class="runv-fig"></div><div class="runv-nums"></div></div>
       </div>
     </div>
-    <p class="byline" id="byor">Your router is not built in? Write one file, <code>routers/my_router.py</code>: history &rarr; quality, KV cache &rarr; cost, then pick. Then change one line, <code>router: my-router</code>.</p>
+    <p class="byline" id="byor">Your router is not built in? Put it in <code>routers/my_router.py</code> in the config&rsquo;s folder: history &rarr; quality, KV cache &rarr; cost, then pick. Then set <code>router: my-router</code> in the config.</p>
     <details class="more byfold"><summary>Show the router file</summary>
       <div class="mk"><div class="mkh" role="group" aria-label="File"><button type="button" data-f="router" aria-pressed="true">my_router.py</button><button type="button" data-f="serving">my_backend.py <i>only for a new backend</i></button></div><pre class="code mkc" id="mkcode"></pre></div>
     </details>
@@ -1715,10 +1715,10 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
   const TURNS = [
     { u: "Here is our 12-page paper. Summarize the method in two sentences.", newTok: 9800, pick: 1, q: 8.4,
       hist: "Empty: this is the first turn.", why: "a long paper needs a capable model, and this one is good enough at under half the price of gemma-31b.",
-      a: "The method routes each turn of a chat to one of several models. It reads the chat so far to predict quality, and each model's cache to predict cost." },
+      a: "The method routes each turn of a conversation to one of several models. It reads the conversation so far to predict quality, and each model's cache to predict cost." },
     { u: "Shorter, please. One sentence.", newTok: 140, pick: 1, q: 8.1,
       hist: "Depends on turn 1: shorten the paper summary.", why: "alone it looks easy, so a router that reads one message would send it to gemma-e4b, which never read the paper. The history says it needs the paper, and this model already holds it.",
-      a: "It routes each chat turn to the model that is best for its quality and cost, given what was said before." },
+      a: "It routes each turn to the model that is best for its quality and cost, given what was said before." },
     { u: "Now compare it with RouteLLM, as a related-work paragraph.", newTok: 160, pick: 1, q: 8.9,
       hist: "Depends on turns 1 and 2.", why: "a harder task, but this model handles it and holds the paper. Moving to mistral-medium-128b would re-read 10k tokens at full price.",
       a: "RouteLLM routes each query on its own; this method also routes later turns, so it can use what earlier turns said and which model already holds them in its cache." },
@@ -1728,7 +1728,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
   ];
   let timer = 0, turn = 0, total = 0, histTok = 0, cache = [0, 0, 0, 0], bigTotal = 0, bigCache = 0;   // big*: the same chat kept on gemma-31b, the best single model
   const money = (x) => "$" + x.toFixed(4);
-  const bill = (a, b) => `<div class="lv-bill"><div><span>This chat</span><b>${money(a)}</b></div><div><span>All on gemma-31b, the best single model</span><b>${money(b)}</b></div></div>`;
+  const bill = (a, b) => `<div class="lv-bill"><div><span>This session</span><b>${money(a)}</b></div><div><span>All on gemma-31b, the best single model</span><b>${money(b)}</b></div></div>`;
   const panel = (t, cost, cached, fresh, saved) => {
     const why = t.why[0].toUpperCase() + t.why.slice(1);
     const read = why + (saved > 0.00005 ? ` Saves ${money(saved)}.` : "");
@@ -1743,7 +1743,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
       `<div><span>cost of this turn</span><i></i><b style="font-size:var(--fs-sub)">${money(cost)}</b></div></div></div>` +
       bill(total, bigTotal);
   };
-  const empty = () => { $("lvPanel").innerHTML = `<div class="lv-h">Before turn 1</div><div class="lv-st"><div><b>History state</b><p>Empty.</p></div><div><b>KV cache state</b><p>No model has read this chat.</p></div></div>` + bill(0, 0); };
+  const empty = () => { $("lvPanel").innerHTML = `<div class="lv-h">Before turn 1</div><div class="lv-st"><div><b>History state</b><p>Empty.</p></div><div><b>KV cache state</b><p>No model has read this session.</p></div></div>` + bill(0, 0); };
   const next = () => {
     if (turn >= TURNS.length) return;
     const t = TURNS[turn]; turn++;
@@ -1768,8 +1768,8 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 
   // ---- plug in: the router file, a serving file, and the one-line switch
   const FILES = {
-    router: "from multiturnserve import register_router, Router\nfrom multiturnserve.parts import CacheCost\nfrom my_lab import MyQuality      # your code\n\n@register_router\nclass MyRouter(Router):\n    name = \"my-router\"\n    quality = MyQuality()      # reads the history\n    cost = CacheCost()         # reads the KV cache\n\n    def decide(self, turn, state):\n        q = self.quality(turn, state.history)\n        c = self.cost(turn, state.kv_cache)\n        return self.pick(q, c)\n\n# after the reply, MultiTurnServe updates both states",
-    serving: "from multiturnserve import register_serving, Serving\n\n@register_serving\nclass MyBackend(Serving):\n    name = \"my-backend\"\n    models = [\"gemma-26b-a4b\", \"gemma-31b\"]\n\n    def run(self, model, messages):\n        reply = my_client.chat(model, messages)\n        return reply.text, reply.usage    # usage: new and cached tokens\n\n    def prices(self, model):\n        return PRICES[model]              # $ per 1M tokens, cached and not",
+    router: "from multiturnserve import register_router, Router\nfrom multiturnserve.parts import CacheCost\nfrom my_lab import MyQuality      # your code (examples/my_lab.py stands in)\n\n@register_router\nclass MyRouter(Router):\n    name = \"my-router\"\n    quality = MyQuality()      # reads the history\n    cost = CacheCost()         # reads the KV cache\n\n    def decide(self, turn, state):\n        q = self.quality(turn, state.history)\n        c = self.cost(turn, state.kv_cache)\n        return self.pick(q, c)\n\n# after the reply, MultiTurnServe updates both states",
+    serving: "from multiturnserve import register_serving, Serving\nfrom my_lab import my_client, PRICES    # your code (examples/my_lab.py stands in)\n\n@register_serving\nclass MyBackend(Serving):\n    name = \"my-backend\"\n    models = [\"gemma-26b-a4b\", \"gemma-31b\"]\n\n    def run(self, model, messages):\n        reply = my_client.chat(model, messages)\n        return reply.text, reply.usage    # usage: new and cached tokens\n\n    def prices(self, model):\n        return PRICES[model]              # $ per 1M tokens, cached and not",
   };
   let file = "router";
   const showFile = () => { const m = $("mkcode"); m.textContent = FILES[file]; mwxHL(m);
@@ -1809,25 +1809,25 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 })();
 </script>
 <script>
-// Get Started: the planned workflow (install -> config -> serve -> app -> log). Numbers are the live chat's example.
+// Get Started: the example that runs with no GPU, data or keys (clone and install -> config -> serve -> app); the output is a real run.
 (() => {
   const root = document.getElementById("workflow"); if (!root) return;
   const $ = (q) => root.querySelector(q), esc = (t) => String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;");
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
   const code = (t) => { const p = el("pre", "wf-yaml"); p.textContent = t; if (window.mwxHL) mwxHL(p); return p; };
   const STEPS = [
-    { cmd: "pip install git+https://github.com/UCF-ML-Research/MultiTurnServe", out: ['<span class="runv-d">Successfully installed multiturnserve</span>'],
-      head: "One package", cap: "The session core, the router interface, ready-made routers and serving adapters.",
-      fig: () => el("div", "wf-chips", ["cor", "mtrouter", "routellm", "vllm", "openrouter"].map((m) => `<code>${m}</code>`).join("") + "<span>routers and serving adapters, and your own in one file</span>") },
-    { cmd: "cat config.yaml", out: [],
-      head: "One file says what to run", cap: "Which router decides, and which backends serve which models.",
-      fig: () => code("# config.yaml\n# router: cor, mtrouter, routellm, carrot, or your own\nrouter: cor\nserving: [vllm, openrouter]\nmodels:\n  vllm: [gemma-e4b, gemma-26b-a4b]\n  openrouter: [gemma-31b, mistral-medium-128b]\nlog: logs/") },
-    { cmd: "multiturnserve serve config.yaml", out: ['  <span class="runv-ok">&#10003;</span> <b>router  </b> cor', '  <span class="runv-ok">&#10003;</span> <b>serving </b> vllm, openrouter', '  <span class="runv-ok">&#10003;</span> listening on :8080'],
-      head: "A gateway your app talks to", cap: "It keeps the history state and the KV cache state of each session.",
-      fig: () => code("# the three calls behind each turn\ns = multiturnserve.open(chat_id)\nd = s.route(messages)     # -> Decision(model, quality, cost)\ns.observe(outcome)        # -> both states updated") },
-    { cmd: "python app.py", out: ['<span class="runv-d">turn 1  gemma-26b-a4b  $0.0007</span>', '<span class="runv-d">turn 2  gemma-26b-a4b  $0.0004</span>', '<span class="runv-d">turn 3  gemma-26b-a4b  $0.0004</span>', '<span class="runv-d">turn 4  gemma-e4b      $0.0002</span>', '<span class="runv-d">chat-1  4 turns  2 models  $0.0018</span>'],
-      head: "Your app routes every turn", cap: "The app sends each turn; the router picks; MultiTurnServe runs the pick.",
-      fig: () => code("# app.py\nimport multiturnserve\n\ns = multiturnserve.open(\"chat-1\", gateway=\":8080\")\nfor msg in chat:\n    reply = s.chat(msg)       # route, run, observe\n    print(reply.turn, reply.model, reply.cost)") },
+    { cmd: "git clone https://github.com/UCF-ML-Research/MultiTurnServe && cd MultiTurnServe && pip install -e \".[serve]\"", out: ['<span class="runv-d">Successfully installed multiturnserve</span>'],
+      head: "Install", cap: "The package with the gateway ([serve] extra), the examples and the demo.",
+      fig: () => el("div", "wf-chips", ["cor", "single-turn", "full-history", "rag", "knn", "bao", "vllm", "openrouter", "echo"].map((m) => `<code>${m}</code>`).join("") + "<span>routers and serving backends; your own plug in the same way</span>") },
+    { cmd: "cat examples/config.yaml", out: [],
+      head: "The config", cap: "The router, the backends and their models. This example runs on the echo backend.",
+      fig: () => code("# examples/config.yaml\nrouter: my-router\nserving: [echo, my-backend]\nmodels:\n  echo: [gemma-e4b]\n  my-backend: [gemma-26b-a4b, gemma-31b]\nlam: 0.2\nplugins: [my_router.py, my_backend.py]\nlog: logs/") },
+    { cmd: "multiturnserve serve examples/config.yaml", out: ['  <b>router  </b> my-router', '  <b>serving </b> echo, my-backend', '  <b>models  </b> gemma-e4b, gemma-26b-a4b, gemma-31b', '  listening on 127.0.0.1:8080'],
+      head: "Start the gateway", cap: "It keeps the history and the KV cache state of each session.",
+      fig: () => code("# an app that calls the model itself\ns = multiturnserve.open(\"session-1\", gateway=\":8080\")\nd = s.route(messages)     # -> Decision(model, quality, cost, t)\n# call d.model, then report its reply and usage\ns.observe(outcome)        # -> both states updated") },
+    { cmd: "python examples/app.py", out: ['<span class="runv-d">1 gemma-e4b 2.40e-07</span>', '<span class="runv-d">2 gemma-26b-a4b 1.61e-06</span>', '<span class="runv-d">3 gemma-26b-a4b 1.92e-06</span>', '<span class="runv-d">4 gemma-26b-a4b 1.60e-06</span>'],
+      head: "Run the app", cap: "It sends four turns; each line is the turn, the picked model and its cost in USD.",
+      fig: () => code("# examples/app.py\nimport multiturnserve\n\nturns = [\"Summarize this paper\", \"Shorter, please\", \"Compare to RouteLLM\", \"Thanks!\"]\n\ns = multiturnserve.open(\"session-1\", gateway=\":8080\")\nfor msg in turns:\n    reply = s.chat(msg)       # route, run, observe\n    print(reply.turn, reply.model, f\"{reply.cost:.2e}\")") },
   ];
   let timer = null, sel = 0;
   function show(i) {

@@ -1,4 +1,4 @@
-"""Chain-of-Route (CoR): the Dialogue State Predictor (dsp.py) estimates every model's quality from the dialogue
+"""Chain-of-Route (CoR): the Dialogue State Propagator (DSP, dsp.py) estimates every model's quality from the dialogue
 state, and the decision charges each model's cached conversation prefix at the cached price (parts.CacheCost, the
 Serving State Tracker)."""
 from ...parts import CacheCost, QualityHead

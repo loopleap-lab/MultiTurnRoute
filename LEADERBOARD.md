@@ -1,6 +1,6 @@
 # Leaderboard
 
-Static track of MultiTurnServe Arena: 3,671 test turns, 9 models (`configs/arena/static.yaml`). Every router is trained on the train split and replayed on the test split over 41 values of the cost weight. Source: the evaluation package's reported run (reported/chat_s0/results.json).
+Static track of MultiTurnServe Arena: 3,671 test turns, 9 models (`configs/arena/static.yaml`). Every router is trained on the train split and replayed on the test split over 41 values of the cost weight. Source: the reported run of the offline evaluation package that `arena replay` ports (seed 0, default options).
 
 - **AUDC**: area under the cost-quality curve (cost normalized by the most expensive model). Higher is better.
 - **QNC**: the lowest normalized cost at which a router reaches the quality of the best single model, gemma-31b (0.7061); interpolated on the curve's upper envelope. Lower is better; - means never.
@@ -16,6 +16,8 @@ Static track of MultiTurnServe Arena: 3,671 test turns, 9 models (`configs/arena
 | 5 | Full history (`full-history`) | 0.6905 | - | - | 0.6952 |
 | 6 | kNN (`knn`) | 0.6858 | - | - | 0.6905 |
 | | gemma-31b alone (reference) | | 0.0462 | 100% | 0.7061 |
+
+CoR's 74% is where the upper envelope of its curve reaches gemma-31b's quality (0.7061). The website quotes another point of the same curve: at cost weight w = 0.12 (score = quality - w x cost, as in the table below), CoR's best point reaches quality 0.7258 at 84% of gemma-31b's cost.
 
 ### Score at a cost weight
 

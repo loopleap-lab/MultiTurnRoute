@@ -1,7 +1,7 @@
 """Sessions: one per chat. A session holds the chat's state (history and KV cache), asks the router for each turn,
 runs the chosen model on its serving backend, and updates the state from the usage the backend reports.
 
-  route(messages) -> Decision(model, quality, cost)    the router's pick for the next turn (no state change)
+  route(messages) -> Decision(model, quality, cost, t) the router's pick for the next turn (no state change)
   run(decision, messages) -> Outcome                   the chosen model answers; realized cost from its usage
   observe(outcome) -> SessionState                     history and KV cache updated, one log line written
   chat(msg) -> Reply                                   all three, for a local session

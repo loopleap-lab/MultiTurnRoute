@@ -48,7 +48,7 @@ def test_app_routes_every_turn_through_the_gateway(gateway, monkeypatch, capsys)
     lines = capsys.readouterr().out.strip().splitlines()
     assert [ln.split()[0] for ln in lines] == ["1", "2", "3", "4"]
     assert all(ln.split()[1] in rt.models and float(ln.split()[2]) > 0 for ln in lines)
-    st = rt.sessions["chat-1"].summary()
+    st = rt.sessions["session-1"].summary()
     assert st["turns"] == 4 and len(open(tmp / "logs" / "turns.jsonl").readlines()) == 4
 
 

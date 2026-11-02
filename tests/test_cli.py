@@ -79,6 +79,14 @@ def test_serve_check(tmp_path, monkeypatch, capsys):
     assert code != 0 and "multiturnserve train --router cor" in err
 
 
+def test_train_explains_missing_data_and_models(tmp_path, monkeypatch, capsys):
+    common = ["train", "--router", "knn", "--out", str(tmp_path / "runs"), "--data"]
+    code, _, err = cli(*common, str(tmp_path / "none"), capsys=capsys)
+    assert code != 0 and "MTS_DATA_DIR" in err and "not public yet" in err
+    code, _, err = cli(*common, str(write_dataset(tmp_path / "data")), capsys=capsys)
+    assert code != 0 and "--models" in err and "gemma-e4b" in err
+
+
 def test_replay_needs_hidden_labels_or_dev(tmp_path, monkeypatch, capsys):
     from multiturnserve.arena.release import release
     root = write_dataset(tmp_path / "data")

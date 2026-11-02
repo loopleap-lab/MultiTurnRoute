@@ -9,6 +9,7 @@ the arena. [How MultiTurnServe works](architecture.md) explains the session stat
 - [Serving](#serving)
 - [Training the built-in routers](#training-the-built-in-routers)
 - [The data](#the-data)
+  - [Toy data](#toy-data)
 - [Running the arena](#running-the-arena)
 - [Track rules](#track-rules)
 - [Reproducing the paper's numbers](#reproducing-the-papers-numbers)
@@ -50,7 +51,7 @@ submission.
 
 ## The config
 
-One YAML file says what to serve:
+The config is a YAML file:
 
 ```yaml
 router: cor                      # a router name, or a .py file
@@ -72,8 +73,8 @@ backends:                        # options per backend
 - Any other key is an error.
 - The pool is the models of every backend, in the order of `serving:` and then `models:`. Ties in a decision go
   to the model listed first. A model may belong to one backend only.
-- `.py` files in `routers/` and `backends/` next to the config are loaded, so `router: my-router` finds
-  `routers/my_router.py`.
+- `.py` files in `routers/` and `backends/` folders next to the config are loaded, so `router: my-router` finds
+  `routers/my_router.py`. A file anywhere else is loaded only when it is listed under `plugins:`.
 - Relative paths in `router` and `plugins` are relative to the config. `log` and `checkpoint` are relative to
   the working directory.
 - `lam` overrides the value saved with a trained router (0.5 by default).
@@ -83,7 +84,8 @@ backends:                        # options per backend
   prices default to the static track's price table.
 
 `configs/serve.yaml` is the config above without the optional keys. `examples/config.yaml` serves an example
-router with the `echo` backend and needs no GPU and no keys.
+router with the `echo` backend and needs no GPU and no keys. It sets `lam: 0.2`, which weighs quality over cost,
+so the example router moves to a larger model after the first turn.
 
 The log is `<log>/turns.jsonl`, one line per answered turn: `chat_id, turn, model, n_prompt_tokens,
 n_cached_tokens, n_output_tokens, cost, quality_hat, cost_hat, time`. `quality_hat` and `cost_hat` are the
@@ -143,19 +145,21 @@ your process from a config:
 ```python
 import multiturnserve
 
-s = multiturnserve.open("chat-1", gateway=":8080")         # a running gateway
+s = multiturnserve.open("session-1", gateway=":8080")      # a running gateway
 reply = s.chat("Summarize this paper")                       # route, run, observe
-print(reply.turn, reply.model, reply.cost)
+print(reply.turn, reply.model, f"{reply.cost:.2e}")
 ```
 
 `gateway` takes `":8080"`, `"host:8080"`, a URL, or an HTTP client object with `.post` and `.get` (for example
 an `httpx.Client` or FastAPI's `TestClient`). `chat(msg)` returns `Reply(chat_id, turn, model, text, cost, usage)`
 and keeps the messages of the session for the next call.
 
-Each turn is three calls, which you can also make one by one:
+Each turn is three calls, which you can also make one by one. `messages` is the session so far as an OpenAI-style
+list of `{"role", "content"}` dicts, ending with the user's new message:
 
 ```python
-s = multiturnserve.open(chat_id, config="config.yaml")    # a session in this process, no gateway
+s = multiturnserve.open("session-1", config="examples/config.yaml")   # a session in this process, no gateway
+messages = [{"role": "user", "content": "Summarize this paper"}]
 d = s.route(messages)     # -> Decision(model, quality, cost, t)
 o = s.run(d, messages)    # the chosen model answers -> Outcome(model, text, usage, cost, query)
 s.observe(o)              # history and KV cache updated, one log line written
@@ -168,6 +172,10 @@ s.observe(o)              # history and KV cache updated, one log line written
 | `run(decision, messages)` | no: call the model yourself, then `observe` | yes |
 | `observe(outcome)` | returns the summary (dict) | returns the new `SessionState` |
 | state | `state()`: the summary from `GET /v1/sessions/{chat_id}` | `s.state` (`SessionState`) and `s.summary()` |
+
+Use either `chat()` or the three calls in one session, not both. `chat()` keeps its own message list and sends
+it to the model; turns made with `route`, `run` and `observe` update the session's history and KV cache state but
+are not added to that list, so a later `chat()` call would send the model a session without them.
 
 `multiturnserve.open(chat_id, runtime=rt)` opens a session on an existing `multiturnserve.Runtime`, so several
 sessions share one router, one set of backends and one log. `Runtime.from_config(config)` builds one from a YAML
@@ -233,6 +241,22 @@ Fields of `chat.jsonl`:
 
 The data have no public download location yet (see the [roadmap](../ROADMAP.md#6-data-and-checkpoints)).
 
+### Toy data
+
+`tests/synth.py` writes a small synthetic data folder in the same format, for trying `train` and `arena replay`
+without the real data. Its numbers mean nothing. From the repository root:
+
+```bash
+python -c "from tests.synth import write_dataset; from multiturnserve.arena.data import MODELS; write_dataset('toy', n_conv=40, models=MODELS)"
+export MTS_DATA_DIR=toy
+multiturnserve train --router cor --out runs/cor                    # about 10 seconds on CPU
+multiturnserve arena replay --dev                                   # the six built-in routers
+multiturnserve arena replay --router examples/my_router.py --dev    # the example router
+```
+
+`models=MODELS` gives every turn the static track's 9 models, so no `--models` is needed. The toy embeddings are
+16-dimensional; to serve a router trained on them, set `encoder: hash` in the config.
+
 ## Running the arena
 
 MultiTurnServe Arena compares routers by answer quality and cost, in two tracks. The
@@ -242,8 +266,8 @@ results.
 ### Static track
 
 ```bash
-multiturnserve arena replay --router routers/my_router.py --dev   # on a held-out part of the training split
-multiturnserve arena submit routers/my_router.py                  # pack the router file for the organizers
+multiturnserve arena replay --router examples/my_router.py --dev                      # on a held-out part of the training split
+multiturnserve arena submit examples/my_router.py --files examples/my_lab.py           # pack the router files for the organizers
 ```
 
 #### arena replay

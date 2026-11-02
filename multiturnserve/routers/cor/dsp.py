@@ -1,4 +1,4 @@
-"""Dialogue State Predictor (DSP) of Chain-of-Route.
+"""Dialogue State Propagator (DSP) of Chain-of-Route.
 
 DSP (default): local state = cross-attention of the query over the last W turn embeddings x = [q; a]; global state =
 GRU over all past x; gate alpha = sigmoid(W[q; H]); quality = head([q; alpha*H]).
