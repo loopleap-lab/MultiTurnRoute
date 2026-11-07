@@ -1,9 +1,9 @@
 cff-version: 1.2.0
-message: "If you use MultiTurnServe or Chain-of-Route in your research, please cite the paper below."
-title: "Chain-of-Route: State-Aware LLM Routing for Multi-Turn Conversations"
+message: "If you use MultiTurnRoute or Chain-of-Route in your research, please cite the paper below."
+title: "MultiTurnRoute: A Platform for Building and Evaluating Multi-Turn LLM Routers"
 type: software
 license: Apache-2.0
-repository-code: "https://github.com/loopleap-lab/MultiTurnServe"
+repository-code: "https://github.com/loopleap-lab/MultiTurnRoute"
 url: "https://openreview.net/forum?id=CPCK7uqzh3"
 authors:
   - family-names: Xue
@@ -16,7 +16,7 @@ authors:
     given-names: Qian
 preferred-citation:
   type: conference-paper
-  title: "Chain-of-Route: State-Aware LLM Routing for Multi-Turn Conversations"
+  title: "MultiTurnRoute: A Platform for Building and Evaluating Multi-Turn LLM Routers"
   authors:
     - family-names: Xue
       given-names: Jiaqi
@@ -31,5 +31,5 @@ preferred-citation:
     name: "NeurIPS 2026"
   year: 2026
   url: "https://openreview.net/forum?id=CPCK7uqzh3"
-  repository-code: "https://github.com/loopleap-lab/MultiTurnServe"
+  repository-code: "https://github.com/loopleap-lab/MultiTurnRoute"
   license: Apache-2.0
