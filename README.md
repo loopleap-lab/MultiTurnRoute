@@ -22,13 +22,15 @@
 
 ## About
 
-**MultiTurnRoute** is a platform for building and evaluating routers that choose an LLM at each turn of a conversation. A registered router reads the current query, dialogue history, and each candidate model's cached prefix. It selects one model, and the runtime records the reply and token usage for the next turn.
+**MultiTurnRoute** is a platform for building and evaluating routers that choose an LLM at each turn of a conversation. A registered router reads the current query, dialogue history, and an estimate of each candidate model's reusable prefix length. It selects one model. The reply extends the dialogue, and the runtime updates the prefix estimate from the selected model's prompt and output token counts.
 
 <p align="center"><a href="docs/assets/overview.pdf"><img src="docs/assets/overview.png" alt="MultiTurnRoute platform overview. At each turn a registered router selects a model using the query and session state. Chain-of-Route, five baselines, and custom routers share an interface. The Arena evaluates them in static replay and interactive sessions." width="100%"></a></p>
 
-**Chain-of-Route (CoR)** is our routing algorithm. It uses recent and recurrent dialogue history to predict response quality and each model's reusable prefix to estimate cost. CoR, five built-in baselines, and user-defined routers implement the same `decide(turn, state)` interface.
+**Chain-of-Route (CoR)** is our routing algorithm. The Dialogue State Propagator (DSP) learns how much recent and recurrent dialogue history to use when predicting quality. The Serving State Tracker (SST) estimates cost using each model's reusable prefix. CoR, five built-in baselines, and user-defined routers implement the same `decide(turn, state)` interface.
 
-**MultiTurnRoute Arena** ranks routers by area under the deferral curve (AUDC) on recorded conversations. Its interactive track compares session quality and cost as a simulated user responds to each model reply. [Platform architecture](docs/architecture.md) · [Arena tracks](arena/README.md) · [Static leaderboard](LEADERBOARD.md)
+**Paper result (five-model benchmark).** On WildChat and LMSYS-Chat-1M, CoR reduced the normalized cost needed to match the strongest model’s quality by up to **20.3%** relative to the strongest routing baseline (Bao et al.), while matching or improving peak quality.
+
+**MultiTurnRoute Arena** ranks routers by area under the deferral curve (AUDC) on recorded conversations. In the interactive track, a simulated user reads each reply and writes the next query. Routers are compared on matched tasks with the same model pool and user simulator. [Platform architecture](docs/architecture.md) · [Arena tracks](arena/README.md) · [Static leaderboard](LEADERBOARD.md)
 
 ## Demo
 
@@ -141,12 +143,14 @@ The [user guide](docs/user-guide.md) covers the rest: the command line, the conf
 
 | Router | Quality from | Cost in the decision |
 |---|---|---|
-| `cor` (ours) | Dialogue State Propagator (DSP): local attention over past turns, a GRU state and a gate | cached prefix of each model at the cached price |
+| `cor` (ours) | Dialogue State Propagator (DSP): local attention over past turns, a GRU state and a gate | estimated reusable prefix of each model at the cached price |
 | `single-turn` | MLP on the current query | full input price |
 | `full-history` | MLP on the history and the query | full input price |
 | `rag` | MLP on the query and the 2 most similar past turns | full input price |
 | `knn` | labels of the 20 most similar training queries | full input price |
 | `bao` | MLP on the history and the query (Bao et al., simplified) | full input price and a penalty for switching models |
+
+In the WildChat eviction study (Appendix H), SST observed each candidate’s surviving prefix length before model selection. In provider-API runs, the backend reports realized cache hits after the call when available.
 
 ## Serving backends
 
@@ -159,7 +163,7 @@ The [user guide](docs/user-guide.md) covers the rest: the command line, the conf
 ## Adding your own router or backend
 
 A router is a class with a `decide(turn, state)` method that returns the model for the turn. This one,
-[`examples/my_router.py`](examples/my_router.py), reads the history for quality and the KV cache for cost, then
+[`examples/my_router.py`](examples/my_router.py), reads the dialogue history for quality and the tracked prefix lengths for cost, then
 picks:
 
 ```python
@@ -192,8 +196,7 @@ MultiTurnRoute Arena compares routers on the same sessions, in two tracks.
 - **Static track.** Every turn of 3,996 conversations from WildChat and LMSYS-Chat-1M (18,637 turns: 14,966 train,
   3,671 test) was answered by the same 9 models and rated by a judge. A router trains on the train split and is
   replayed on the held-out test split; the test ratings are hidden.
-- **Dynamic track.** Sessions are played live: a simulated user writes each turn, the router picks from your model
-  pool, and a judge rates every answer. You run it with your own endpoints and keys.
+- **Dynamic track.** A simulated user responds to each model reply, and a judge rates each answer in context. For each cost weight, the Arena averages quality and normalized cost over rated turns and sums the billed cost over all turns.
 
 ```bash
 multiturnserve arena replay --router examples/my_router.py --dev     # static track, on a held-out part of train
@@ -206,7 +209,7 @@ public yet.
 The static track needs the MultiTurnRoute data in `$MTS_DATA_DIR`; [toy data](docs/user-guide.md#toy-data) run the
 same commands. [`arena/`](arena) has the track rules.
 
-**Results.** On the static track (3,671 test turns, 9 models, one run with seed 0), CoR reaches the quality of the
+**Arena result.** On the static track (3,671 test turns, 9 models, one run with seed 0), CoR reaches the quality of the
 best single model, gemma-31b (0.7061), at 74% of gemma-31b's cost, interpolated on the upper envelope of its
 cost-quality curve; none of the five baselines reaches that quality. [LEADERBOARD.md](LEADERBOARD.md) has every
 router, and [Reproducing the leaderboard](docs/user-guide.md#reproducing-the-leaderboard) gives the

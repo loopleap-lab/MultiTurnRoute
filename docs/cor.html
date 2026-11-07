@@ -1545,7 +1545,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 
 </head>
 <body>
-<div class="ticker" aria-hidden="true"><div class="track"><span>Chain-of-Route, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnRoute Arena: 3,996 conversations, 9 models</span><span>Chain-of-Route, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnRoute Arena: 3,996 conversations, 9 models</span></div></div>
+<div class="ticker" aria-hidden="true"><div class="track"><span>MultiTurnRoute, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnRoute Arena: 3,996 conversations, 9 models</span><span>MultiTurnRoute, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnRoute Arena: 3,996 conversations, 9 models</span></div></div>
 <nav class="nav" aria-label="Site">
   <div class="wrap">
     <a class="brand" href="index.html#top">
@@ -1562,10 +1562,10 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 
 <section class="band" id="cor">
   <div class="wrap">
-    <div class="head"><div><h2><img src="assets/chain-of-route.svg" alt="" style="width:1.3em;height:.72em;vertical-align:baseline;margin-right:.18em"> <span style="white-space:nowrap">Chain-of-<span class="hl">Route</span></span></h2><p>Chain-of-Route (CoR) is our routing algorithm in MultiTurnRoute. It predicts quality from dialogue history, estimates cost from each model&rsquo;s cached prefix, and selects one model for the turn.</p></div></div>
+    <div class="head"><div><h2><img src="assets/chain-of-route.svg" alt="" style="width:1.3em;height:.72em;vertical-align:baseline;margin-right:.18em"> <span style="white-space:nowrap">Chain-of-<span class="hl">Route</span></span></h2><p>Chain-of-Route (CoR) is our routing algorithm in MultiTurnRoute. It predicts response quality from dialogue history and estimates cost from each candidate’s reusable prefix before selecting one model.</p></div></div>
     <div class="pro2 method">
       <div class="pp">
-        <div class="ph"><b>History</b><span>From the history, CoR builds a compact state of the session and updates it after each reply, so it never re-reads the whole session.</span></div>
+        <div class="ph"><b>History</b><span>The Dialogue State Propagator (DSP) combines recent turns with a recurrent summary. A learned gate controls how much history to use for the current query.</span></div>
         <div class="pdia">
           <div class="pbox rule"><svg class="keyic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h12v8H8l-3 3v-3H3z"/><path d="M18 9h3v8h-2v3l-3-3h-5v-2"/></svg><b>Session state</b></div>
           <div class="both loop" aria-hidden="true"><i></i><i></i><span class="t">read<span class="lg"> each turn</span></span><span class="b">update<span class="lg"> after reply</span></span></div>
@@ -1573,7 +1573,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
         </div>
       </div>
       <div class="pp">
-        <div class="ph"><b>KV cache</b><span>CoR turns the cache state MultiTurnRoute keeps into an estimated cost for each model, with cached tokens at the cached price.</span></div>
+        <div class="ph"><b>KV cache</b><span>The Serving State Tracker (SST) prices the estimated reusable prefix at the cached-input rate. In the WildChat eviction experiment, SST saw each candidate’s surviving prefix before model selection.</span></div>
         <div class="pdia">
           <div class="pbox rule"><span class="kvb" aria-hidden="true"><i style="--w:90%"></i><i style="--w:35%"></i><i style="--w:0%"></i></span><b>KV cache per model</b></div>
           <div class="both edit" aria-hidden="true"><i></i><span>cached<span class="lg"> tokens</span></span></div>
@@ -1582,7 +1582,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
       </div>
     </div>
     <p class="apiline"><code>pick = argmax over models of (1 &minus; &lambda;) &times; <em>quality</em> &minus; &lambda; &times; <em>cost</em> / (cost of the most expensive model)</code></p>
-    <div class="pnums one"><div><b>84%</b><span>of gemma-31b&rsquo;s cost, at higher quality (0.726 vs 0.706): CoR on the MultiTurnRoute Arena static track, at score weight w = 0.12 (score = quality &minus; w &times; cost, cost as a share of gemma-31b&rsquo;s). w is not the router&rsquo;s &lambda;: &lambda; sets each pick, and w picks a point on the curve that sweeping &lambda; traces. At gemma-31b&rsquo;s quality, CoR costs 74%. <a class="tlink" href="arena.html?w=0.12#board">See the leaderboard</a></span></div></div>
+    <div class="pnums"><div><b>Up to 20.3%</b><span>lower normalized cost to match the strongest model’s quality, relative to Bao et al. on the paper’s five-model benchmark. CoR matched or improved peak quality (Table 1).</span></div><div><b>84%</b><span>of gemma-31b&rsquo;s cost, at higher quality (0.726 vs 0.706): CoR on the MultiTurnRoute Arena static track, at score weight w = 0.12 (score = quality &minus; w &times; cost, cost as a share of gemma-31b&rsquo;s). w is not the router&rsquo;s &lambda;: &lambda; sets each pick, and w picks a point on the curve that sweeping &lambda; traces. At gemma-31b&rsquo;s quality, CoR costs 74%. <a class="tlink" href="arena.html?w=0.12#weighted">See the leaderboard</a></span></div></div>
   </div>
 </section>
 

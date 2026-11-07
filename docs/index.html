@@ -1542,7 +1542,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 .paper-overview figcaption a {text-decoration:underline}
 </style></head>
 <body>
-<div class="ticker" aria-hidden="true"><div class="track"><span>Chain-of-Route, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnRoute Arena: 3,996 conversations, 9 models</span><span>Chain-of-Route, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnRoute Arena: 3,996 conversations, 9 models</span></div></div>
+<div class="ticker" aria-hidden="true"><div class="track"><span>MultiTurnRoute, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnRoute Arena: 3,996 conversations, 9 models</span><span>MultiTurnRoute, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnRoute Arena: 3,996 conversations, 9 models</span></div></div>
 <nav class="nav" aria-label="Site">
   <div class="wrap">
     <a class="brand" href="#top">
@@ -1559,7 +1559,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
   <div class="hero-grid" aria-hidden="true"></div><div class="hero-glow" aria-hidden="true"><i></i><i></i></div>
   <div class="wrap hero-in">
     <h1 class="paper-heading"><span class="paper-name"><img src="assets/multiturnroute.svg" alt=""> MultiTurn<span class="hl">Route</span><span class="title-colon">:</span></span> <span class="paper-subtitle">A Platform for Building and Evaluating Multi-Turn LLM Routers</span></h1>
-    <p class="desc">Build a router that chooses an LLM at each turn. Chain-of-Route uses dialogue history to predict quality and each model’s cached prefix to estimate cost. MultiTurnRoute Arena compares it with built-in and user-defined routers on recorded and interactive conversations.</p>
+    <p class="desc">MultiTurnRoute gives built-in and custom routers a shared interface for choosing an LLM at each turn. Our router, Chain-of-Route, predicts quality from dialogue history and estimates cost from reusable prefixes. MultiTurnRoute Arena evaluates routers on recorded and interactive conversations.</p>
     <figure class="paper-overview"><a href="assets/overview.pdf" aria-label="Open Figure 1 as a full-size PDF"><img src="assets/overview.png" width="1584" height="771" alt="MultiTurnRoute platform overview. At each turn a registered router selects a model using the query and session state. Chain-of-Route, five baselines, and custom routers share an interface. The Arena evaluates them in static replay and interactive sessions."></a><figcaption>Figure 1. The session runtime, router implementations, and evaluation Arena. <a href="assets/overview.pdf">View full size (PDF)</a></figcaption></figure>
     <div class="ticket">
       <div class="install"><code><span>git clone https://github.com/loopleap-lab/MultiTurnRoute</span><span>cd MultiTurnRoute &amp;&amp; pip install -e ".[serve]"</span></code></div>
@@ -1610,19 +1610,19 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
     <div class="head"><div><h2>Why Routing Needs <span class="hl">Session State</span></h2><p>In a session, the right model for a turn depends on the turns before it.</p></div></div>
     <div class="pro2">
       <div class="pp">
-        <div class="ph"><b>Meaning</b><span>A turn often means what the turns before it say. A router that sees only the last turn misreads it.</span></div>
+        <div class="ph"><b>Meaning</b><span>A short follow-up can depend on a much earlier reply. The dialogue history helps the router interpret the current query.</span></div>
         <div class="whyex"><span class="note">&ldquo;Shorter, please&rdquo; looks easy alone; after &ldquo;Summarize this 12-page paper&rdquo; it is a hard task.</span></div>
         <div class="pnums">
           <div><b>58.7%</b><span>WildChat</span></div>
           <div><b>54.2%</b><span>LMSYS-Chat-1M</span></div>
-          <p class="pcap">of messages in these two public sets of real conversations get a judge score at least 3 points lower when the earlier messages are removed (CoR paper, Section 4).</p>
+          <p class="pcap">of held-out turns had a quality score at least 3 points lower on the 1–10 scale when prior turns were removed (paper, Section 4).</p>
         </div>
       </div>
       <div class="pp">
-        <div class="ph"><b>Cost</b><span>A model that already read the session answers the next turn for less. Its KV cache, the model&rsquo;s memory of the session so far, holds the earlier turns; only the same model can reuse it.</span></div>
+        <div class="ph"><b>Cost</b><span>A model can reuse a prompt prefix from an earlier turn if it still holds that prefix in its KV cache. Reuse can lower the input cost of choosing that model again.</span></div>
         <div class="whyex"><b>gemma-31b, price per 1M tokens</b><table><tr><td>Input</td><td>$0.20</td></tr><tr><td>Cached input</td><td>$0.04</td></tr></table><span class="note">Switching to a model that has not read the session pays for the whole history again.</span></div>
         <div class="pnums one">
-          <div><b>~95%</b><span>In the CoR paper (Section 4), a cost estimate that ignores the cache is off by about 95% (mean absolute percentage error) at turn 6.</span></div>
+          <div><b>~95%</b><span>In the five-model benchmark (Section 4), a cost estimate that ignores the cache is off by about 95% (mean absolute percentage error) at turn 6.</span></div>
         </div>
       </div>
     </div>
@@ -1639,11 +1639,11 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
       </div>
       <div class="sl plug routers">
         <span class="sn">Routers</span>
-        <div class="sb pgs"><div class="pg"><em>Look at the whole session</em><a class="m ours" href="cor.html">Chain-of-Route (ours)</a><span class="m">Full history</span><span class="m">RAG history</span><span class="m">Bao et al. (simplified)</span></div><div class="pg"><em>Look at one turn</em><span class="m">Single-turn</span><span class="m">kNN</span></div><span class="m add pgadd">+ your router</span><p class="pgcap">All plug in the same way and can be submitted to <a href="arena.html">MultiTurnRoute Arena</a>.</p></div>
+        <div class="sb pgs"><div class="pg"><em>Use dialogue history</em><a class="m ours" href="cor.html">Chain-of-Route (ours)</a><span class="m">Full history</span><span class="m">RAG history</span><span class="m">Bao et al. (simplified)</span></div><div class="pg"><em>Use the current query</em><span class="m">Single-turn</span><span class="m">kNN</span></div><span class="m add pgadd">+ your router</span><p class="pgcap">All plug in the same way and can be submitted to <a href="arena.html">MultiTurnRoute Arena</a>.</p></div>
       </div>
       <div class="sl core">
         <span class="sn">MultiTurnRoute</span>
-        <div class="sb core-sb"><div class="flow3"><div class="op"><b>New session</b><span>one state per session</span></div><i class="sa" aria-hidden="true"></i><div class="op"><b>Each turn</b><span>ask the router, send the turn to its pick</span></div><i class="sa" aria-hidden="true"></i><div class="op"><b>After the reply</b><span>record the bill; update history and KV cache</span></div></div><div class="core-st2"><div><b>History</b><span>what each session said</span></div><div><b>KV cache</b><span>which model already read the session, from the cached tokens each backend reports</span></div></div></div>
+        <div class="sb core-sb"><div class="flow3"><div class="op"><b>New session</b><span>one state per session</span></div><i class="sa" aria-hidden="true"></i><div class="op"><b>Each turn</b><span>ask the router, send the turn to its pick</span></div><i class="sa" aria-hidden="true"></i><div class="op"><b>After the reply</b><span>record usage and update session state</span></div></div><div class="core-st2"><div><b>History</b><span>what each session said</span></div><div><b>Reusable prefix</b><span>estimated per model from its last prompt and output token counts</span></div></div></div>
       </div>
       <div class="sl base">
         <span class="sn">Where the models run</span>
