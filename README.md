@@ -22,15 +22,15 @@
 
 ## About
 
-**MultiTurnRoute** is a platform for building and evaluating routers that choose an LLM at each turn of a conversation. A registered router reads the current query, dialogue history, and an estimate of each candidate model's reusable prefix length. It selects one model. The reply extends the dialogue, and the runtime updates the prefix estimate from the selected model's prompt and output token counts.
+<img src="docs/assets/multiturnroute.svg" alt="" height="18"> **MultiTurnRoute** is a platform for building and evaluating routers that choose an LLM at each turn of a conversation. A registered router reads the current query, dialogue history, and an estimate of each candidate model's reusable prefix length. It selects one model. The reply extends the dialogue, and the runtime updates the prefix estimate from the selected model's prompt and output token counts.
 
 <p align="center"><a href="docs/assets/overview.pdf"><img src="docs/assets/overview.png" alt="MultiTurnRoute platform overview. At each turn a registered router selects a model using the query and session state. Chain-of-Route, five baselines, and custom routers share an interface. The Arena evaluates them in static replay and interactive sessions." width="100%"></a></p>
 
-**Chain-of-Route (CoR)** is our routing algorithm. The Dialogue State Propagator (DSP) learns how much recent and recurrent dialogue history to use when predicting quality. The Serving State Tracker (SST) estimates cost using each model's reusable prefix. CoR, five built-in baselines, and user-defined routers implement the same `decide(turn, state)` interface.
+<img src="docs/assets/chain-of-route.svg" alt="" height="18"> **Chain-of-Route (CoR)** is our routing algorithm. The Dialogue State Propagator (DSP) learns how much recent and recurrent dialogue history to use when predicting quality. The Serving State Tracker (SST) estimates cost using each model's reusable prefix. CoR, five built-in baselines, and user-defined routers implement the same `decide(turn, state)` interface.
 
 **Paper result (five-model benchmark).** On WildChat and LMSYS-Chat-1M, CoR reduced the normalized cost needed to match the strongest model’s quality by up to **20.3%** relative to the strongest routing baseline (Bao et al.), while matching or improving peak quality.
 
-**MultiTurnRoute Arena** ranks routers by area under the deferral curve (AUDC) on recorded conversations. In the interactive track, a simulated user reads each reply and writes the next query. Routers are compared on matched tasks with the same model pool and user simulator. [Platform architecture](docs/architecture.md) · [Arena tracks](arena/README.md) · [Static leaderboard](LEADERBOARD.md)
+<img src="docs/assets/multiturnroute-arena.svg" alt="" height="18"> **MultiTurnRoute Arena** ranks routers by area under the deferral curve (AUDC) on recorded conversations. In the interactive track, a simulated user reads each reply and writes the next query. Routers are compared on matched tasks with the same model pool and user simulator. [Platform architecture](docs/architecture.md) · [Arena tracks](arena/README.md) · [Static leaderboard](LEADERBOARD.md)
 
 ## Demo
 
@@ -117,7 +117,7 @@ s.observe(o)              # both states updated
 Use either `chat()` or the three calls in one session, not both. `chat()` keeps its own message list, and turns
 made with `route`, `run` and `observe` are not in it.
 
-### Chain-of-Route on the MultiTurnRoute data
+### <img src="docs/assets/chain-of-route.svg" alt="" height="22"> Chain-of-Route on the MultiTurnRoute data
 
 The built-in routers, Chain-of-Route among them, are trained on the MultiTurnRoute data before they serve. The
 data are not public yet ([ROADMAP](ROADMAP.md#6-data-and-checkpoints)). With the data in `$MTS_DATA_DIR`:
@@ -143,7 +143,7 @@ The [user guide](docs/user-guide.md) covers the rest: the command line, the conf
 
 | Router | Quality from | Cost in the decision |
 |---|---|---|
-| `cor` (ours) | Dialogue State Propagator (DSP): local attention over past turns, a GRU state and a gate | estimated reusable prefix of each model at the cached price |
+| <img src="docs/assets/chain-of-route.svg" alt="" height="14"> `cor` (ours) | Dialogue State Propagator (DSP): local attention over past turns, a GRU state and a gate | estimated reusable prefix of each model at the cached price |
 | `single-turn` | MLP on the current query | full input price |
 | `full-history` | MLP on the history and the query | full input price |
 | `rag` | MLP on the query and the 2 most similar past turns | full input price |
@@ -189,7 +189,7 @@ and set `router: my-router`. [`examples/config.yaml`](examples/config.yaml) does
 the text and the usage, and `prices(model)` the cached and uncached prices. [Routers](docs/routers.md) and [Backends](docs/backends.md) walk through both
 with runnable code from [`examples/`](examples).
 
-## Arena
+## <img src="docs/assets/multiturnroute-arena.svg" alt="" height="26"> MultiTurnRoute Arena
 
 MultiTurnRoute Arena compares routers on the same sessions, in two tracks.
 
