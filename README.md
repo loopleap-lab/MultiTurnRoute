@@ -1,15 +1,8 @@
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/logo-dark.png">
-    <img alt="MultiTurnServe" src="docs/assets/logo-light.png" width="520">
-  </picture>
-</p>
-
-<h3 align="center">Chain-of-Route: State-Aware LLM Routing for Multi-Turn Conversations</h3>
+<h1 align="center"><img src="docs/assets/multiturnroute.svg" alt="" width="62"> MultiTurnRoute: A Platform for Building and Evaluating Multi-Turn LLM Routers</h1>
 
 <p align="center">
   <b>Project</b>&nbsp; · &nbsp;
-  <a href="https://claude.ai/artifact/AYHUoA4NUXJdo1Dd71U6G1">Website</a> ·
+  <a href="https://loopleap-lab.github.io/MultiTurnRoute/">Website</a> ·
   <a href="https://openreview.net/forum?id=CPCK7uqzh3">Paper</a> ·
   <a href="#citation">Cite</a>
   <br>
@@ -17,7 +10,7 @@
   <a href="#quick-start">Quick start</a> ·
   <a href="#demo">Demo</a> ·
   <a href="LEADERBOARD.md">Leaderboard</a> ·
-  <a href="https://github.com/loopleap-lab/MultiTurnServe/issues">Issues</a>
+  <a href="https://github.com/loopleap-lab/MultiTurnRoute/issues">Issues</a>
   <br>
   <b>Reference</b>&nbsp; · &nbsp;
   <a href="#documentation">Docs</a> ·
@@ -29,40 +22,13 @@
 
 ## About
 
-**MultiTurnServe** is the session layer released with Chain-of-Route (CoR, NeurIPS 2026). It sits between a
-multi-turn LLM application and its serving backends and picks the model that answers each turn. For every session
-it keeps the two states a multi-turn router needs, and any router plugged into it reads both.
+**MultiTurnRoute** is a platform for building and evaluating routers that choose an LLM at each turn of a conversation. A registered router reads the current query, dialogue history, and each candidate model's cached prefix. It selects one model, and the runtime records the reply and token usage for the next turn.
 
-<p align="center">
-  <a href="docs/assets/overview.pdf"><img alt="MultiTurnServe at a glance: a multi-turn session and a config go in; MultiTurnServe keeps the session state (the dialogue state and each model's serving state, its KV cache), the router (Chain-of-Route, 5 others, or yours) selects a model, a serving backend runs it, and the arena evaluates routers on recorded conversations and with a simulated user; the reply and the billed tokens of the turn come out" src="docs/assets/overview.png" width="86%"></a>
-</p>
+<p align="center"><a href="docs/assets/overview.pdf"><img src="docs/assets/overview.png" alt="MultiTurnRoute platform overview. At each turn a registered router selects a model using the query and session state. Chain-of-Route, five baselines, and custom routers share an interface. The Arena evaluates them in static replay and interactive sessions." width="100%"></a></p>
 
-**MultiTurnServe at a glance.** At every turn, MultiTurnServe maintains the dialogue state and each model's serving
-state (its KV cache); the router, Chain-of-Route by default, estimates quality from the former and cost from the
-latter, and the arena evaluates new routers against Chain-of-Route on recorded conversations and with a simulated
-user.
+**Chain-of-Route (CoR)** is our routing algorithm. It uses recent and recurrent dialogue history to predict response quality and each model's reusable prefix to estimate cost. CoR, five built-in baselines, and user-defined routers implement the same `decide(turn, state)` interface.
 
-Routing a multi-turn session differs from routing single queries in two ways:
-
-- **Dialogue state.** What a query means and how hard it is depends on the turns before it. A follow-up such as
-  "what should I eat?" is a medical question after a turn about covid symptoms.
-- **Serving state.** What a model costs depends on how much of the session it already holds in its KV cache.
-  Staying on a model reuses its cache at the cached price; switching to another model pays for the whole prompt.
-
-MultiTurnServe keeps both states and gives them to the router at every turn:
-
-- **Session state**: the history of the session, and for each model the prefix of the session it has cached,
-  updated from the serving backend's usage after each turn.
-- **Routers**: Chain-of-Route and five baselines (single-turn, full-history, rag, knn, bao). A router implements
-  `decide(turn, state)`, and your own router takes the same slot.
-- **Serving backends**: vLLM and OpenRouter, plus `echo` for tests. Both report the cached tokens that the cost
-  accounting uses when the server provides them: vLLM with `--enable-prompt-tokens-details`, OpenRouter depending
-  on the provider.
-- **Arena**: routers compared on the same sessions, by replaying recorded conversations from WildChat and
-  LMSYS-Chat-1M answered by 9 models (static track) or by playing sessions live against a simulated user (dynamic
-  track).
-
-[How MultiTurnServe works](docs/architecture.md) shows the layers, their interfaces and the per-turn loop.
+**MultiTurnRoute Arena** ranks routers by area under the deferral curve (AUDC) on recorded conversations. Its interactive track compares session quality and cost as a simulated user responds to each model reply. [Platform architecture](docs/architecture.md) · [Arena tracks](arena/README.md) · [Static leaderboard](LEADERBOARD.md)
 
 ## Demo
 
@@ -81,15 +47,15 @@ python -m demo.session        # no GPU and no API keys: the echo backend
 ## Installation
 
 ```bash
-git clone https://github.com/loopleap-lab/MultiTurnServe.git
-cd MultiTurnServe
+git clone https://github.com/loopleap-lab/MultiTurnRoute.git
+cd MultiTurnRoute
 pip install -e ".[serve]"            # the package, the `multiturnserve` command and the gateway
 pip install -e ".[encoder]"          # live embeddings for the built-in routers
 ```
 
-MultiTurnServe needs Python 3.10 or later. Its core dependencies are numpy, PyYAML and PyTorch (torch), so the
+The Python import and command-line executable are both named `multiturnserve`. MultiTurnRoute needs Python 3.10 or later. Its core dependencies are numpy, PyYAML and PyTorch (torch), so the
 first install also installs torch. Serving and the tests run on CPU; the encoder is faster on a GPU. The
-built-in routers train on the MultiTurnServe data: set `MTS_DATA_DIR` to its folder. The data are not public yet
+built-in routers train on the MultiTurnRoute data: set `MTS_DATA_DIR` to its folder. The data are not public yet
 ([ROADMAP](ROADMAP.md#6-data-and-checkpoints)); [toy data](docs/user-guide.md#toy-data) let you try training and
 the arena without them. The [user guide](docs/user-guide.md) has the data layout and the other options.
 
@@ -149,9 +115,9 @@ s.observe(o)              # both states updated
 Use either `chat()` or the three calls in one session, not both. `chat()` keeps its own message list, and turns
 made with `route`, `run` and `observe` are not in it.
 
-### Chain-of-Route on the MultiTurnServe data
+### Chain-of-Route on the MultiTurnRoute data
 
-The built-in routers, Chain-of-Route among them, are trained on the MultiTurnServe data before they serve. The
+The built-in routers, Chain-of-Route among them, are trained on the MultiTurnRoute data before they serve. The
 data are not public yet ([ROADMAP](ROADMAP.md#6-data-and-checkpoints)). With the data in `$MTS_DATA_DIR`:
 
 ```yaml
@@ -221,7 +187,7 @@ with runnable code from [`examples/`](examples).
 
 ## Arena
 
-MultiTurnServe Arena compares routers on the same sessions, in two tracks.
+MultiTurnRoute Arena compares routers on the same sessions, in two tracks.
 
 - **Static track.** Every turn of 3,996 conversations from WildChat and LMSYS-Chat-1M (18,637 turns: 14,966 train,
   3,671 test) was answered by the same 9 models and rated by a judge. A router trains on the train split and is
@@ -237,7 +203,7 @@ multiturnserve arena run --config pool.yaml --tasks my_tasks.jsonl --out runs/dy
 The dynamic track plays tasks from a file you provide, in the `chat.jsonl` format; the test conversations are not
 public yet.
 
-The static track needs the MultiTurnServe data in `$MTS_DATA_DIR`; [toy data](docs/user-guide.md#toy-data) run the
+The static track needs the MultiTurnRoute data in `$MTS_DATA_DIR`; [toy data](docs/user-guide.md#toy-data) run the
 same commands. [`arena/`](arena) has the track rules.
 
 **Results.** On the static track (3,671 test turns, 9 models, one run with seed 0), CoR reaches the quality of the
@@ -251,7 +217,7 @@ commands.
 | document | what it covers |
 |---|---|
 | [User guide](docs/user-guide.md) | installing; the config; serving through the gateway, the OpenAI API and the Python session; training the built-in routers; logs; running the arena |
-| [How MultiTurnServe works](docs/architecture.md) | the session state, router, backend and arena layers and their interfaces; the route, run, observe loop; cost accounting with cached tokens; repository layout |
+| [How MultiTurnRoute works](docs/architecture.md) | the session state, router, backend and arena layers and their interfaces; the route, run, observe loop; cost accounting with cached tokens; repository layout |
 | [Routers](docs/routers.md) | the built-in routers; writing your own, with runnable code |
 | [Backends](docs/backends.md) | the serving backends and their keys; how cached tokens are read; adding a backend |
 | [Arena](arena/README.md) · [Leaderboard](LEADERBOARD.md) | the static and dynamic tracks, their rules, and the static-track results |
@@ -279,7 +245,7 @@ numbers: its main results (Section 4) use a different, five-model pool.
 ## Issues and contact
 
 Questions, bug reports and feature requests go to
-[GitHub issues](https://github.com/loopleap-lab/MultiTurnServe/issues).
+[GitHub issues](https://github.com/loopleap-lab/MultiTurnRoute/issues).
 
 ## License
 
@@ -287,13 +253,13 @@ Apache License 2.0. See [LICENSE](LICENSE).
 
 ## Citation
 
-If you use MultiTurnServe or Chain-of-Route in your research, please cite the
+If you use MultiTurnRoute or Chain-of-Route in your research, please cite the
 [paper](https://openreview.net/forum?id=CPCK7uqzh3). You can also
-[download the BibTeX entry](docs/assets/multiturnserve.bib).
+[download the BibTeX entry](docs/assets/multiturnroute.bib).
 
 ```bibtex
 @inproceedings{xue2026chainofroute,
-  title     = {Chain-of-Route: State-Aware {LLM} Routing for Multi-Turn Conversations},
+  title     = {{MultiTurnRoute}: A Platform for Building and Evaluating Multi-Turn {LLM} Routers},
   author    = {Xue, Jiaqi and Zheng, Mengxin and Huang, Heng and Lou, Qian},
   booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
   year      = {2026},
