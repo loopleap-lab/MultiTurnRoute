@@ -3,7 +3,7 @@
 <p align="center">
   <b>Project</b>&nbsp; · &nbsp;
   <a href="https://loopleap-lab.github.io/MultiTurnRoute/">Website</a> ·
-  <a href="https://openreview.net/forum?id=CPCK7uqzh3">Paper</a> ·
+  <a href="https://loopleap-lab.github.io/MultiTurnRoute/MultiTurnRoute.pdf">Paper</a> ·
   <a href="#citation">Cite</a>
   <br>
   <b>Get started</b>&nbsp; · &nbsp;
@@ -257,7 +257,7 @@ Apache License 2.0. See [LICENSE](LICENSE).
 ## Citation
 
 If you use MultiTurnRoute or Chain-of-Route in your research, please cite the
-[paper](https://openreview.net/forum?id=CPCK7uqzh3). You can also
+[paper](https://loopleap-lab.github.io/MultiTurnRoute/MultiTurnRoute.pdf). You can also
 [download the BibTeX entry](docs/assets/multiturnroute.bib).
 
 ```bibtex
@@ -266,6 +266,6 @@ If you use MultiTurnRoute or Chain-of-Route in your research, please cite the
   author    = {Xue, Jiaqi and Zheng, Mengxin and Huang, Heng and Lou, Qian},
   booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
   year      = {2026},
-  url       = {https://openreview.net/forum?id=CPCK7uqzh3}
+  url       = {https://loopleap-lab.github.io/MultiTurnRoute/MultiTurnRoute.pdf}
 }
 ```

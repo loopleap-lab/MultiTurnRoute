@@ -4,7 +4,7 @@ title: "MultiTurnRoute: A Platform for Building and Evaluating Multi-Turn LLM Ro
 type: software
 license: Apache-2.0
 repository-code: "https://github.com/loopleap-lab/MultiTurnRoute"
-url: "https://openreview.net/forum?id=CPCK7uqzh3"
+url: "https://loopleap-lab.github.io/MultiTurnRoute/"
 authors:
   - family-names: Xue
     given-names: Jiaqi
@@ -30,6 +30,6 @@ preferred-citation:
   conference:
     name: "NeurIPS 2026"
   year: 2026
-  url: "https://openreview.net/forum?id=CPCK7uqzh3"
+  url: "https://loopleap-lab.github.io/MultiTurnRoute/MultiTurnRoute.pdf"
   repository-code: "https://github.com/loopleap-lab/MultiTurnRoute"
   license: Apache-2.0
