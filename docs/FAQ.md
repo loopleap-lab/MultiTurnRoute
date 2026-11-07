@@ -1,6 +1,6 @@
-# MultiTurnServe FAQ
+# MultiTurnRoute FAQ
 
-Short answers to the questions people ask when they start using MultiTurnServe. Each answer links to the full
+Short answers to the questions people ask when they start using MultiTurnRoute. Each answer links to the full
 documentation.
 
 - [The basics](#the-basics)
@@ -13,12 +13,12 @@ documentation.
 
 ## The basics
 
-### What does MultiTurnServe do?
+### What does MultiTurnRoute do?
 
 It routes every turn of a multi-turn session to one model of a pool. For each session it keeps the dialogue
 history and the KV cache state, the tokens each model already holds for the session. A router reads both and
 picks the model; a serving backend runs it and reports its usage, which updates both states and gives the cost.
-[How MultiTurnServe works](architecture.md) has the details.
+[How MultiTurnRoute works](architecture.md) has the details.
 
 ### Is it only for chat applications?
 
@@ -46,7 +46,7 @@ not on PyPI yet. See [Installation](user-guide.md#installation).
 
 ### Where do I get the data?
 
-The routers train on the MultiTurnServe data (`chat.jsonl`, the turn embeddings and `prices.json`); set
+The routers train on the MultiTurnRoute data (`chat.jsonl`, the turn embeddings and `prices.json`); set
 `MTS_DATA_DIR` to its folder. The data have no public download location yet, and no trained checkpoints are
 published ([roadmap](../ROADMAP.md#6-data-and-checkpoints)). [The data](user-guide.md#the-data) describes the
 format, and [Toy data](user-guide.md#toy-data) shows how to write a synthetic data folder to try `train` and

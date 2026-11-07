@@ -25,7 +25,7 @@ def create_app(runtime):
     except ImportError:
         raise ImportError(SERVE_EXTRA) from None
 
-    app = FastAPI(title="MultiTurnServe gateway")
+    app = FastAPI(title="MultiTurnRoute gateway")
 
     def chat_of(body: dict, header: str | None) -> str:
         cid = body.get("chat_id") or header or body.get("user")

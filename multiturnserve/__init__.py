@@ -1,4 +1,4 @@
-"""MultiTurnServe: a session layer for multi-turn LLM routing.
+"""MultiTurnRoute, a platform for building and evaluating multi-turn LLM routers.
 
 Each session keeps two states, the history and the KV cache each model holds for it; a router reads both to pick the
 model for every turn, and the serving backend's usage keeps them up to date.

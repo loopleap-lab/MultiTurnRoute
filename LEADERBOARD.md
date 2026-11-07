@@ -1,6 +1,6 @@
 # Leaderboard
 
-Static track of MultiTurnServe Arena: 3,671 test turns, 9 models (`configs/arena/static.yaml`). Every router is trained on the train split and replayed on the test split over 41 values of its cost weight lam. Source: the reported run of the offline evaluation package that `arena replay` ports (seed 0, default options).
+Static track of MultiTurnRoute Arena: 3,671 test turns, 9 models (`configs/arena/static.yaml`). Every router is trained on the train split and replayed on the test split over 41 values of its cost weight lam. Source: the reported run of the offline evaluation package that `arena replay` ports (seed 0, default options).
 
 - **AUDC**: area under the cost-quality curve (cost normalized by the most expensive model). Higher is better.
 - **QNC**: the lowest normalized cost at which a router reaches the quality of the best single model, gemma-31b (0.7061); interpolated on the curve's upper envelope. Lower is better; - means never.

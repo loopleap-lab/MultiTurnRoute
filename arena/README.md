@@ -1,4 +1,4 @@
-# MultiTurnServe Arena
+# MultiTurnRoute Arena
 
 Compares LLM routers on real multi-turn conversations, by answer quality and cost, in two tracks. The code is in
 [`multiturnserve/arena/`](../multiturnserve/arena); every command and option is in the

@@ -1,6 +1,6 @@
-# How MultiTurnServe works
+# How MultiTurnRoute works
 
-MultiTurnServe routes every turn of a multi-turn session to one model of a pool. Each session keeps two states:
+MultiTurnRoute routes every turn of a multi-turn session to one model of a pool. Each session keeps two states:
 - the dialogue history: what was said, and which model answered each turn;
 - the KV cache state: how many tokens of this session each model already holds.
 

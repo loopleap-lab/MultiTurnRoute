@@ -114,7 +114,7 @@ class MyRouter(Router):
         c = self.cost(turn, state.kv_cache)
         return self.pick(q, c)
 
-# after the reply, MultiTurnServe updates both states
+# after the reply, MultiTurnRoute updates both states
 ```
 
 `MyQuality` is your quality estimate: called with `(turn, history)`, it returns one number per model of
@@ -126,7 +126,7 @@ The name uses dashes and may not be the name of a built-in router.
 
 ### 2. Serve it
 
-MultiTurnServe loads a router file in one of two ways: from a `routers/` folder in the config's folder, or from
+MultiTurnRoute loads a router file in one of two ways: from a `routers/` folder in the config's folder, or from
 the config's `plugins:` list (paths relative to the config). A file next to the config but not listed under
 `plugins:` is not loaded. Then name the router in the config:
 

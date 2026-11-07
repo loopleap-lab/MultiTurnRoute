@@ -1,6 +1,6 @@
-# MultiTurnServe Roadmap
+# MultiTurnRoute Roadmap
 
-MultiTurnServe routes every turn of a multi-turn session to one model of a pool, keeping the session's dialogue
+MultiTurnRoute routes every turn of a multi-turn session to one model of a pool, keeping the session's dialogue
 history and KV cache state for the router. Its arena compares routers by quality and cost in a static and a
 dynamic track.
 

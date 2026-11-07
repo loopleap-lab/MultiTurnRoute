@@ -41,7 +41,7 @@ section.band#why2 { background-image: none !important; } section.band#why2 > .wr
 .rules.r4 b { font-size: 18px; } .rules.r4 span { font-size: 16px; }
 @media (max-width: 860px) { .rules.r4 { grid-template-columns: minmax(0, 1fr); } .rules.r4 > div + div { border-left: 0; border-top: 2px solid var(--rule) !important; } }
 </style>
-<title>MultiTurnServe Arena</title>
+<title>MultiTurnRoute Arena</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
@@ -1398,7 +1398,7 @@ section.band, section.band.dark, #why, #results, #toolkit, .hero { background-co
 @media (prefers-reduced-motion: reduce) { .wf-stamp { animation: none; } .cta-tk:hover .tk-stub { transform: none; } }
 </style>
 <style>
-/* ===== MultiTurnServe: what this page adds to the shared poster stylesheet ===== */
+/* ===== MultiTurnRoute: what this page adds to the shared poster stylesheet ===== */
 :root { --ease: cubic-bezier(.23, 1, .32, 1); }
 .plan-tag { display: inline-block; padding: 2px 8px; border: 2px solid var(--amber); color: var(--accent); font-family: var(--sans); font-size: var(--fs-lab); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; vertical-align: middle; }
 .ticket .install .plan-tag { margin-left: auto; }
@@ -1469,7 +1469,7 @@ section.band, section.band.dark, #why, #results, #toolkit, .hero { background-co
 .rbar b { text-align: right; font-variant-numeric: tabular-nums; }
 .rnote { margin: 16px 0 0; font-size: var(--fs-text); color: var(--muted); }
 
-/* live chat: the chat on the left, what MultiTurnServe did this turn on the right */
+/* live chat: the chat on the left, what MultiTurnRoute did this turn on the right */
 .live { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); border: 2px solid var(--rule); background: var(--paper); }
 @media (max-width: 860px) { .live { grid-template-columns: minmax(0, 1fr); } .lv-panel { border-left: 0 !important; border-top: 2px solid var(--rule); } }
 .lv-chat { display: flex; flex-direction: column; min-width: 0; }
@@ -1966,12 +1966,12 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 
 </head>
 <body>
-<div class="ticker" aria-hidden="true"><div class="track"><span>Chain-of-Route, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnServe Arena: 3,996 conversations, 9 models</span><span>Chain-of-Route, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnServe Arena: 3,996 conversations, 9 models</span></div></div>
+<div class="ticker" aria-hidden="true"><div class="track"><span>Chain-of-Route, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnRoute Arena: 3,996 conversations, 9 models</span><span>Chain-of-Route, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnRoute Arena: 3,996 conversations, 9 models</span></div></div>
 <nav class="nav" aria-label="Site">
   <div class="wrap">
     <a class="brand" href="index.html#top">
-      <svg class="rtic" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="none" stroke="var(--ink)" stroke-width="2.4"/><path d="M8 11 C14 11 14 17 20 17 M8 23 C14 23 14 17 20 17 M20 17 H27" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="27" cy="17" r="2.6" fill="var(--good)"/></svg>
-      <span>MultiTurn<span class="hl">Serve</span></span>
+      <img class="rtic" src="assets/multiturnroute.svg" alt="" width="34" height="24">
+      <span>MultiTurn<span class="hl">Route</span></span>
     </a>
     <div class="nav-links"><a href="cor.html">Chain-of-Route</a><a href="#arena">Arena</a></div>
     <div class="nav-end"><a class="btn sm primary" href="index.html#start">Get started</a></div>
@@ -1982,7 +1982,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 
 <section class="band" id="arena">
   <div class="wrap">
-    <div class="ptitle"><h1>MultiTurnServe <span class="hl">Arena</span></h1><p>A router picks which LLM answers each turn of a session. The Arena scores a router on recorded and live sessions for answer quality and cost.</p>
+    <div class="ptitle"><h1><img src="assets/multiturnroute-arena.svg" alt="" style="width:1.3em;height:.72em;vertical-align:baseline;margin-right:.18em"> MultiTurnRoute <span class="hl">Arena</span></h1><p>A router picks which LLM answers each turn of a session. The Arena scores a router on recorded and live sessions for answer quality and cost.</p>
       <ol class="toc"><li><a href="#why2">Why two tracks</a></li><li><a href="#tracks">How the tracks work</a></li><li><a href="#board">Leaderboard</a></li><li><a href="#rules">Data and rules</a></li></ol></div>
   </div>
 </section>
@@ -2055,11 +2055,11 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
   <div class="wrap">
     <div class="fgrid">
       <div><a class="brand" href="index.html#top">
-      <svg class="rtic" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="none" stroke="var(--ink)" stroke-width="2.4"/><path d="M8 11 C14 11 14 17 20 17 M8 23 C14 23 14 17 20 17 M20 17 H27" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="27" cy="17" r="2.6" fill="var(--good)"/></svg>
-      <span>MultiTurn<span class="hl">Serve</span></span>
-    </a><p style="margin:12px 0 0;max-width:46ch">A session layer for multi-turn LLM routing. UCF ML Research</p></div>
-      <div><h4>Project</h4><ul><li><a href="https://github.com/loopleap-lab/MultiTurnServe">GitHub</a></li><li><a href="https://openreview.net/forum?id=CPCK7uqzh3">Paper</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/ROADMAP.md">Roadmap</a></li></ul></div>
-      <div><h4>Docs</h4><ul><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/user-guide.md">User guide</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/architecture.md">Architecture</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/routers.md">Routers</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/backends.md">Backends</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/FAQ.md">FAQ</a></li></ul></div>
+      <img class="rtic" src="assets/multiturnroute.svg" alt="" width="34" height="24">
+      <span>MultiTurn<span class="hl">Route</span></span>
+    </a><p style="margin:12px 0 0;max-width:46ch">A platform for building and evaluating multi-turn LLM routers. LoopLeap Lab, UCF.</p></div>
+      <div><h4>Project</h4><ul><li><a href="https://github.com/loopleap-lab/MultiTurnRoute">GitHub</a></li><li><a href="https://openreview.net/forum?id=CPCK7uqzh3">Paper</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnRoute/blob/main/ROADMAP.md">Roadmap</a></li></ul></div>
+      <div><h4>Docs</h4><ul><li><a href="https://github.com/loopleap-lab/MultiTurnRoute/blob/main/docs/user-guide.md">User guide</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnRoute/blob/main/docs/architecture.md">Architecture</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnRoute/blob/main/docs/routers.md">Routers</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnRoute/blob/main/docs/backends.md">Backends</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnRoute/blob/main/docs/FAQ.md">FAQ</a></li></ul></div>
     </div>
   </div>
 </footer>

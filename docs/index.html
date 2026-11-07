@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
-<title>MultiTurnServe</title>
+<title>MultiTurnRoute: A Platform for Building and Evaluating Multi-Turn LLM Routers</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
@@ -1371,7 +1371,7 @@ section.band, section.band.dark, #why, #results, #toolkit, .hero { background-co
 @media (prefers-reduced-motion: reduce) { .wf-stamp { animation: none; } .cta-tk:hover .tk-stub { transform: none; } }
 </style>
 <style>
-/* ===== MultiTurnServe: what this page adds to the shared poster stylesheet ===== */
+/* ===== MultiTurnRoute: what this page adds to the shared poster stylesheet ===== */
 :root { --ease: cubic-bezier(.23, 1, .32, 1); }
 .plan-tag { display: inline-block; padding: 2px 8px; border: 2px solid var(--amber); color: var(--accent); font-family: var(--sans); font-size: var(--fs-lab); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; vertical-align: middle; }
 .ticket .install .plan-tag { margin-left: auto; }
@@ -1442,7 +1442,7 @@ section.band, section.band.dark, #why, #results, #toolkit, .hero { background-co
 .rbar b { text-align: right; font-variant-numeric: tabular-nums; }
 .rnote { margin: 16px 0 0; font-size: var(--fs-text); color: var(--muted); }
 
-/* live chat: the chat on the left, what MultiTurnServe did this turn on the right */
+/* live chat: the chat on the left, what MultiTurnRoute did this turn on the right */
 .live { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); border: 2px solid var(--rule); background: var(--paper); }
 @media (max-width: 860px) { .live { grid-template-columns: minmax(0, 1fr); } .lv-panel { border-left: 0 !important; border-top: 2px solid var(--rule); } }
 .lv-chat { display: flex; flex-direction: column; min-width: 0; }
@@ -1530,14 +1530,24 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 .pnums.one { grid-template-columns: minmax(0, 1fr); }
 </style>
 
-</head>
+<style>
+.hero h1.paper-heading {display:grid;justify-items:center;gap:.35em;margin:0;white-space:normal;line-height:1.05}
+.paper-name {display:inline-flex;align-items:center;font-size:clamp(32px,6.7vw,82px);letter-spacing:-.045em}
+.paper-name img {width:1.12em;height:auto;margin-right:.18em}
+.paper-name .title-colon {width:0;overflow:hidden;display:inline-block}
+.paper-subtitle {max-width:34ch;font-size:clamp(21px,3.5vw,42px);line-height:1.13;letter-spacing:-.022em;text-wrap:balance}
+.paper-overview {width:min(100%,1000px);margin:4px auto 10px;text-align:left}
+.paper-overview img {display:block;width:100%;height:auto;border-radius:6px}
+.paper-overview figcaption {margin-top:8px;font-size:15px;line-height:1.4}
+.paper-overview figcaption a {text-decoration:underline}
+</style></head>
 <body>
-<div class="ticker" aria-hidden="true"><div class="track"><span>Chain-of-Route, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnServe Arena: 3,996 conversations, 9 models</span><span>Chain-of-Route, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnServe Arena: 3,996 conversations, 9 models</span></div></div>
+<div class="ticker" aria-hidden="true"><div class="track"><span>Chain-of-Route, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnRoute Arena: 3,996 conversations, 9 models</span><span>Chain-of-Route, NeurIPS 2026</span><span>Six built-in routers</span><span>OpenAI-compatible gateway</span><span>MultiTurnRoute Arena: 3,996 conversations, 9 models</span></div></div>
 <nav class="nav" aria-label="Site">
   <div class="wrap">
     <a class="brand" href="#top">
-      <svg class="rtic" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="none" stroke="var(--ink)" stroke-width="2.4"/><path d="M8 11 C14 11 14 17 20 17 M8 23 C14 23 14 17 20 17 M20 17 H27" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="27" cy="17" r="2.6" fill="var(--good)"/></svg>
-      <span>MultiTurn<span class="hl">Serve</span></span>
+      <img class="rtic" src="assets/multiturnroute.svg" alt="" width="34" height="24">
+      <span>MultiTurn<span class="hl">Route</span></span>
     </a>
     <div class="nav-links"><a href="cor.html">Chain-of-Route</a><a href="arena.html">Arena</a></div>
     <div class="nav-end"><a class="btn sm primary" href="#start">Get started</a></div>
@@ -1548,11 +1558,11 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 <header class="hero" id="top">
   <div class="hero-grid" aria-hidden="true"></div><div class="hero-glow" aria-hidden="true"><i></i><i></i></div>
   <div class="wrap hero-in">
-    <div class="lockup"><h1>MultiTurn<span class="hl">Serve</span></h1></div>
-    <div class="sub">A session layer for multi-turn LLM routing</div>
-    <p class="desc">A router picks which model answers each turn of a multi-turn session: a cheap one for an easy follow-up, a strong one for a hard question, without paying twice for the same session history. MultiTurnServe keeps track of what each session said and which model already read it, so any router can use both.</p>
+    <h1 class="paper-heading"><span class="paper-name"><img src="assets/multiturnroute.svg" alt=""> MultiTurn<span class="hl">Route</span><span class="title-colon">:</span></span> <span class="paper-subtitle">A Platform for Building and Evaluating Multi-Turn LLM Routers</span></h1>
+    <p class="desc">Build a router that chooses an LLM at each turn. Chain-of-Route uses dialogue history to predict quality and each model’s cached prefix to estimate cost. MultiTurnRoute Arena compares it with built-in and user-defined routers on recorded and interactive conversations.</p>
+    <figure class="paper-overview"><a href="assets/overview.pdf" aria-label="Open Figure 1 as a full-size PDF"><img src="assets/overview.png" width="1584" height="771" alt="MultiTurnRoute platform overview. At each turn a registered router selects a model using the query and session state. Chain-of-Route, five baselines, and custom routers share an interface. The Arena evaluates them in static replay and interactive sessions."></a><figcaption>Figure 1. The session runtime, router implementations, and evaluation Arena. <a href="assets/overview.pdf">View full size (PDF)</a></figcaption></figure>
     <div class="ticket">
-      <div class="install"><code><span>git clone https://github.com/loopleap-lab/MultiTurnServe</span><span>cd MultiTurnServe &amp;&amp; pip install -e ".[serve]"</span></code></div>
+      <div class="install"><code><span>git clone https://github.com/loopleap-lab/MultiTurnRoute</span><span>cd MultiTurnRoute &amp;&amp; pip install -e ".[serve]"</span></code></div>
       <div class="tear"><a class="primary" href="#start">Get started</a><a href="#live">Try an example session</a></div>
     </div>
     <div class="hfig" id="hfig" aria-label="Four turns of a session. Each turn adds to the history and to the KV cache of the model that answered. To route turn 3, the router reads both.">
@@ -1621,18 +1631,18 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 
 <section class="band dark" id="toolkit">
   <div class="wrap">
-    <div class="head"><div><h2>The <span class="hl">MultiTurnServe</span> Toolkit</h2><p>Your app sends each turn and a router picks the model. MultiTurnServe keeps the state of each session.</p></div></div>
-    <div class="stack" aria-label="The MultiTurnServe stack: your app on top, then the routers, the session core, and serving">
+    <div class="head"><div><h2>The <span class="hl">MultiTurnRoute</span> runtime</h2><p>Your app sends each turn and a router picks the model. MultiTurnRoute keeps the state of each session.</p></div></div>
+    <div class="stack" aria-label="The MultiTurnRoute stack: your app on top, then the routers, the session core, and serving">
       <div class="sl apps">
         <span class="sn">Your app</span>
         <div class="sb"><span class="app">Chat assistants</span><span class="app">Support bots</span><span class="app">Research assistants</span></div>
       </div>
       <div class="sl plug routers">
         <span class="sn">Routers</span>
-        <div class="sb pgs"><div class="pg"><em>Look at the whole session</em><a class="m ours" href="cor.html">Chain-of-Route (ours)</a><span class="m">Full history</span><span class="m">RAG history</span><span class="m">Bao et al. (simplified)</span></div><div class="pg"><em>Look at one turn</em><span class="m">Single-turn</span><span class="m">kNN</span></div><span class="m add pgadd">+ your router</span><p class="pgcap">All plug in the same way and can be submitted to <a href="arena.html">MultiTurnServe Arena</a>.</p></div>
+        <div class="sb pgs"><div class="pg"><em>Look at the whole session</em><a class="m ours" href="cor.html">Chain-of-Route (ours)</a><span class="m">Full history</span><span class="m">RAG history</span><span class="m">Bao et al. (simplified)</span></div><div class="pg"><em>Look at one turn</em><span class="m">Single-turn</span><span class="m">kNN</span></div><span class="m add pgadd">+ your router</span><p class="pgcap">All plug in the same way and can be submitted to <a href="arena.html">MultiTurnRoute Arena</a>.</p></div>
       </div>
       <div class="sl core">
-        <span class="sn">MultiTurnServe</span>
+        <span class="sn">MultiTurnRoute</span>
         <div class="sb core-sb"><div class="flow3"><div class="op"><b>New session</b><span>one state per session</span></div><i class="sa" aria-hidden="true"></i><div class="op"><b>Each turn</b><span>ask the router, send the turn to its pick</span></div><i class="sa" aria-hidden="true"></i><div class="op"><b>After the reply</b><span>record the bill; update history and KV cache</span></div></div><div class="core-st2"><div><b>History</b><span>what each session said</span></div><div><b>KV cache</b><span>which model already read the session, from the cached tokens each backend reports</span></div></div></div>
       </div>
       <div class="sl base">
@@ -1677,11 +1687,11 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
   <div class="wrap">
     <div class="fgrid">
       <div><a class="brand" href="#top">
-      <svg class="rtic" viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="none" stroke="var(--ink)" stroke-width="2.4"/><path d="M8 11 C14 11 14 17 20 17 M8 23 C14 23 14 17 20 17 M20 17 H27" fill="none" stroke="var(--accent)" stroke-width="2.6" stroke-linecap="round"/><circle cx="27" cy="17" r="2.6" fill="var(--good)"/></svg>
-      <span>MultiTurn<span class="hl">Serve</span></span>
-    </a><p style="margin:12px 0 0;max-width:46ch">A session layer for multi-turn LLM routing. UCF ML Research</p></div>
-      <div><h4>Project</h4><ul><li><a href="https://github.com/loopleap-lab/MultiTurnServe">GitHub</a></li><li><a href="https://openreview.net/forum?id=CPCK7uqzh3">Paper</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/ROADMAP.md">Roadmap</a></li></ul></div>
-      <div><h4>Docs</h4><ul><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/user-guide.md">User guide</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/architecture.md">Architecture</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/routers.md">Routers</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/backends.md">Backends</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnServe/blob/main/docs/FAQ.md">FAQ</a></li></ul></div>
+      <img class="rtic" src="assets/multiturnroute.svg" alt="" width="34" height="24">
+      <span>MultiTurn<span class="hl">Route</span></span>
+    </a><p style="margin:12px 0 0;max-width:46ch">A platform for building and evaluating multi-turn LLM routers. LoopLeap Lab, UCF.</p></div>
+      <div><h4>Project</h4><ul><li><a href="https://github.com/loopleap-lab/MultiTurnRoute">GitHub</a></li><li><a href="https://openreview.net/forum?id=CPCK7uqzh3">Paper</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnRoute/blob/main/ROADMAP.md">Roadmap</a></li></ul></div>
+      <div><h4>Docs</h4><ul><li><a href="https://github.com/loopleap-lab/MultiTurnRoute/blob/main/docs/user-guide.md">User guide</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnRoute/blob/main/docs/architecture.md">Architecture</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnRoute/blob/main/docs/routers.md">Routers</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnRoute/blob/main/docs/backends.md">Backends</a></li><li><a href="https://github.com/loopleap-lab/MultiTurnRoute/blob/main/docs/FAQ.md">FAQ</a></li></ul></div>
     </div>
   </div>
 </footer>
@@ -1772,7 +1782,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
 
   // ---- plug in: the router file, a serving file, and the one-line switch
   const FILES = {
-    router: "from multiturnserve import register_router, Router\nfrom multiturnserve.parts import CacheCost\nfrom my_lab import MyQuality      # your code (examples/my_lab.py stands in)\n\n@register_router\nclass MyRouter(Router):\n    name = \"my-router\"\n    quality = MyQuality()      # reads the history\n    cost = CacheCost()         # reads the KV cache\n\n    def decide(self, turn, state):\n        q = self.quality(turn, state.history)\n        c = self.cost(turn, state.kv_cache)\n        return self.pick(q, c)\n\n# after the reply, MultiTurnServe updates both states",
+    router: "from multiturnserve import register_router, Router\nfrom multiturnserve.parts import CacheCost\nfrom my_lab import MyQuality      # your code (examples/my_lab.py stands in)\n\n@register_router\nclass MyRouter(Router):\n    name = \"my-router\"\n    quality = MyQuality()      # reads the history\n    cost = CacheCost()         # reads the KV cache\n\n    def decide(self, turn, state):\n        q = self.quality(turn, state.history)\n        c = self.cost(turn, state.kv_cache)\n        return self.pick(q, c)\n\n# after the reply, MultiTurnRoute updates both states",
     serving: "from multiturnserve import register_serving, Serving\nfrom my_lab import my_client, PRICES    # your code (examples/my_lab.py stands in)\n\n@register_serving\nclass MyBackend(Serving):\n    name = \"my-backend\"\n    models = [\"gemma-26b-a4b\", \"gemma-31b\"]\n\n    def run(self, model, messages):\n        reply = my_client.chat(model, messages)\n        return reply.text, reply.usage    # usage: new and cached tokens\n\n    def prices(self, model):\n        return PRICES[model]              # $ per 1M tokens, cached and not",
   };
   let file = "router";
@@ -1820,7 +1830,7 @@ header.hero + section.band { background-image: linear-gradient(var(--rule), var(
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
   const code = (t) => { const p = el("pre", "wf-yaml"); p.textContent = t; if (window.mwxHL) mwxHL(p); return p; };
   const STEPS = [
-    { cmd: "git clone https://github.com/loopleap-lab/MultiTurnServe && cd MultiTurnServe && pip install -e \".[serve]\"", out: ['<span class="runv-d">Successfully installed multiturnserve</span>'],
+    { cmd: "git clone https://github.com/loopleap-lab/MultiTurnRoute && cd MultiTurnRoute && pip install -e \".[serve]\"", out: ['<span class="runv-d">Successfully installed multiturnserve</span>'],
       head: "Install", cap: "The package with the gateway ([serve] extra), the examples and the demo.",
       fig: () => el("div", "wf-chips", ["cor", "single-turn", "full-history", "rag", "knn", "bao", "vllm", "openrouter", "echo"].map((m) => `<code>${m}</code>`).join("") + "<span>routers and serving backends; your own plug in the same way</span>") },
     { cmd: "cat examples/config.yaml", out: [],

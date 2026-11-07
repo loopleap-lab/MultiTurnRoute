@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="108" height="60" preserveAspectRatio="xMinYMin meet" viewBox="0 0 108 60" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="108" height="60"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-60)" style="clip-path: url(#clip)">
+		<g transform="">
+			<g transform="">
+				<path d="M 53 56 L 43 44 L 30 44 C 19 44 13 38 13 30 C 13 21 20 16 30 16 L 35 16 L 48 29 L 63 29 L 38 4 L 30 4 C 11 4 1 15 1 30 C 1 45 12 56 30 56 Z " style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(9%,23%,32%); fill-rule: evenodd;"/>
+				<path d="M 55 4 L 65 16 L 78 16 C 89 16 95 22 95 30 C 95 39 88 44 78 44 L 73 44 L 60 31 L 45 31 L 70 56 L 78 56 C 97 56 107 45 107 30 C 107 15 96 4 78 4 Z " style="stroke: none; stroke-linecap: butt; stroke-width: 1; fill: rgb(67%,41%,9%); fill-rule: evenodd;"/>
+			</g>
+		</g>
+	</g>
+</svg>

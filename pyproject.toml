@@ -1,7 +1,7 @@
 [project]
 name = "multiturnserve"
 version = "0.1.0"
-description = "A session layer for multi-turn LLM routing: per-session history and KV cache state, routers, serving backends, an arena."
+description = "MultiTurnRoute is a platform for building and evaluating multi-turn LLM routers."
 readme = "README.md"
 license = {text = "Apache-2.0"}
 requires-python = ">=3.10"

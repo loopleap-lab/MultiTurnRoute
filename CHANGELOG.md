@@ -18,7 +18,7 @@ First release. The code went in on 2026-10-30, ported from the evaluation packag
   `/v1/observe`, `/v1/sessions/{chat_id}`, `/v1/models` and `/health`. The Python client,
   `multiturnserve.open(chat_id, gateway=":8080")`, and local sessions from a config.
 - Routers and backends from plugin files: `routers/` and `backends/` next to the config, or `plugins:`.
-- MultiTurnServe Arena. Static track: `arena replay` over 41 cost weights with AUDC, QNC, QNC_hull, peak quality
+- MultiTurnRoute Arena. Static track: `arena replay` over 41 cost weights with AUDC, QNC, QNC_hull, peak quality
   and a paired bootstrap; `arena release` for the public data with the test labels held apart; `arena submit` for
   a router file; `arena leaderboard`. Dynamic track: `arena run` with a user simulator, `arena judge`,
   `arena score`, `arena submit --log`.

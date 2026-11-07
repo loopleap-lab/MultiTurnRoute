@@ -1,7 +1,7 @@
 # User guide
 
-How to install MultiTurnServe, write its config, serve multi-turn sessions, train the built-in routers and run
-the arena. [How MultiTurnServe works](architecture.md) explains the session state and the cost accounting;
+How to install MultiTurnRoute, write its config, serve multi-turn sessions, train the built-in routers and run
+the arena. [How MultiTurnRoute works](architecture.md) explains the session state and the cost accounting;
 [Routers](routers.md) and [Serving backends](backends.md) cover the two interfaces you can extend.
 
 - [Installation](#installation)
@@ -19,13 +19,13 @@ the arena. [How MultiTurnServe works](architecture.md) explains the session stat
 From source:
 
 ```bash
-git clone https://github.com/loopleap-lab/MultiTurnServe.git && cd MultiTurnServe
+git clone https://github.com/loopleap-lab/MultiTurnRoute.git && cd MultiTurnRoute
 pip install -e ".[serve,test]"      # the package, the `multiturnserve` command, the gateway (and pytest)
 pip install -e ".[encoder]"         # transformers, for live embeddings with granite-4.2-3b
 pytest -q                           # synthetic data, CPU, about 10 seconds
 ```
 
-MultiTurnServe needs Python 3.10 or later. The package is not on PyPI yet.
+MultiTurnRoute needs Python 3.10 or later. The package is not on PyPI yet.
 
 | Extra | Adds | Needed for |
 |---|---|---|
@@ -262,7 +262,7 @@ The toy data include test labels, so `arena replay` runs on their test split wit
 
 ## Running the arena
 
-MultiTurnServe Arena compares routers by answer quality and cost, in two tracks. The
+MultiTurnRoute Arena compares routers by answer quality and cost, in two tracks. The
 [arena page](../arena/README.md) gives a short overview; the [leaderboard](../LEADERBOARD.md) holds the current
 results.
 

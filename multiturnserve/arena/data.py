@@ -83,7 +83,7 @@ def load(name: str = "chat", models: list | None = None, batch: str | None = Non
     by_conv: dict = {}
     path, seen = data_dir(data) / f"{name}.jsonl", set()
     if not path.exists():
-        raise FileNotFoundError(f"no {path}: set MTS_DATA_DIR (or --data) to the MultiTurnServe data folder. "
+        raise FileNotFoundError(f"no {path}: set MTS_DATA_DIR (or --data) to the MultiTurnRoute data folder. "
                                 f"The data are not public yet (see ROADMAP.md)")
     with open(path) as f:
         for line in f:

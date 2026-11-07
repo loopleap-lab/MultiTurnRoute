@@ -167,7 +167,7 @@ def parser() -> argparse.ArgumentParser:
     p = sub.add_parser("list", help="routers and serving backends")
     p.set_defaults(func=cmd_list)
 
-    arena = sub.add_parser("arena", help="MultiTurnServe Arena: static and dynamic tracks")
+    arena = sub.add_parser("arena", help="MultiTurnRoute Arena: static and dynamic tracks")
     asub = arena.add_subparsers(dest="arena_cmd", required=True)
 
     p = asub.add_parser("replay", help="static track: train routers, replay them on the test split, write results.json")

@@ -48,7 +48,7 @@ def markdown(results: dict, source: str = "results.json", note: str = "") -> str
     lines = [
         "# Leaderboard",
         "",
-        f"Static track of MultiTurnServe Arena: {results['n_test_turns']:,} test turns, {len(results['models'])} models "
+        f"Static track of MultiTurnRoute Arena: {results['n_test_turns']:,} test turns, {len(results['models'])} models "
         f"(`configs/arena/static.yaml`). Every router is trained on the train split and replayed on the test split "
         f"over 41 values of its cost weight lam. Source: {source}.",
         "",

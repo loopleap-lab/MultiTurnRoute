@@ -1,4 +1,4 @@
-"""One multi-turn session through MultiTurnServe, turn by turn, with no GPU and no API keys.
+"""One multi-turn session through MultiTurnRoute, turn by turn, with no GPU and no API keys.
 
 The router, backends and cost weight are the ones in examples/config.yaml (examples/my_router.py on the echo
 backend and a stand-in backend, lam 0.2), so the numbers are those of the echo backend: it answers with the last
